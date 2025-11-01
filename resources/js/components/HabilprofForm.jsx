@@ -348,7 +348,7 @@ function HabilprofForm() {
                                 </Form.Group>
 
                                 {/* --- CAMPOS DINÁMICOS --- */}
-                                {(formData.tipo_habilitacion === 'PrIng' || formData.tipo_habilitacion === 'PrInv') && (
+                                {(formData.tipo_habilitacion === 'Proyecto de Ingeniería' || formData.tipo_habilitacion === 'Proyecto de Investigación') && (
                                     <PrIngInvFields 
                                         formData={formData} 
                                         handleChange={handleChange} 
@@ -357,7 +357,7 @@ function HabilprofForm() {
                                     />
                                 )}
 
-                                {formData.tipo_habilitacion === 'PrTut' && (
+                                {formData.tipo_habilitacion === 'Práctica Tutelada' && (
                                     <PrTutFields 
                                         formData={formData} 
                                         handleChange={handleChange} 
