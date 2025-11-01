@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict iHpgIujUnyoNBbJpgrNnB6VMFnINpkrD6c6FBIOor8H6f9JNkPQbX5P3zGa0UfG
+\restrict 1WDNOPlwAtbUwUJrd4vFThh7P9WgvmdiIudWwZBpxDdJi72IEtMr1XA0Sg7kLap
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
 
--- Started on 2025-10-30 01:24:50
+-- Started on 2025-10-31 21:34:41
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,45 +21,7 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-ALTER TABLE ONLY public.prtut DROP CONSTRAINT prtut_rut_supervisor_fkey;
-ALTER TABLE ONLY public.prtut DROP CONSTRAINT prtut_rut_empresa_fkey;
-ALTER TABLE ONLY public.prtut DROP CONSTRAINT prtut_id_habilitacion_fkey;
-ALTER TABLE ONLY public.prinv DROP CONSTRAINT prinv_id_habilitacion_fkey;
-ALTER TABLE ONLY public.pring DROP CONSTRAINT pring_id_habilitacion_fkey;
-ALTER TABLE ONLY public.habilitacion_profesional DROP CONSTRAINT habilitacion_profesional_rut_alumno_fkey;
-ALTER TABLE ONLY public.asigna DROP CONSTRAINT fk_asigna_profesor;
-ALTER TABLE ONLY public.asigna DROP CONSTRAINT fk_asigna_habilitacion;
-ALTER TABLE ONLY public.supervisor DROP CONSTRAINT supervisor_pkey;
-ALTER TABLE ONLY public.prtut DROP CONSTRAINT prtut_pkey;
-ALTER TABLE ONLY public.profesor DROP CONSTRAINT profesor_pkey;
-ALTER TABLE ONLY public.prinv DROP CONSTRAINT prinv_pkey;
-ALTER TABLE ONLY public.pring DROP CONSTRAINT pring_pkey;
-ALTER TABLE ONLY public.habilitacion_profesional DROP CONSTRAINT habilitacion_profesional_pkey;
-ALTER TABLE ONLY public.empresa DROP CONSTRAINT empresa_pkey;
-ALTER TABLE ONLY public.autentificacion_de_usuarios DROP CONSTRAINT autentificacion_de_usuarios_pkey;
-ALTER TABLE ONLY public.asigna DROP CONSTRAINT asigna_pkey;
-ALTER TABLE ONLY public.alumno DROP CONSTRAINT alumno_pkey;
-DROP TABLE public.supervisor;
-DROP TABLE public.prtut;
-DROP TABLE public.profesor;
-DROP TABLE public.prinv;
-DROP TABLE public.pring;
-DROP TABLE public.habilitacion_profesional;
-DROP TABLE public.empresa;
-DROP TABLE public.autentificacion_de_usuarios;
-DROP TABLE public.asigna;
-DROP TABLE public.alumno;
-DROP TYPE public.tipo_rol;
-DROP SCHEMA public;
---
--- TOC entry 5 (class 2615 OID 46058)
--- Name: public; Type: SCHEMA; Schema: -; Owner: pg_database_owner
---
 
-CREATE SCHEMA public;
-
-
-ALTER SCHEMA public OWNER TO pg_database_owner;
 
 --
 -- TOC entry 4972 (class 0 OID 0)
@@ -71,7 +33,7 @@ COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 --
--- TOC entry 855 (class 1247 OID 46060)
+-- TOC entry 855 (class 1247 OID 46886)
 -- Name: tipo_rol; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -90,7 +52,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 217 (class 1259 OID 46069)
+-- TOC entry 217 (class 1259 OID 46895)
 -- Name: alumno; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -104,7 +66,7 @@ CREATE TABLE public.alumno (
 ALTER TABLE public.alumno OWNER TO postgres;
 
 --
--- TOC entry 218 (class 1259 OID 46072)
+-- TOC entry 218 (class 1259 OID 46898)
 -- Name: asigna; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -118,7 +80,7 @@ CREATE TABLE public.asigna (
 ALTER TABLE public.asigna OWNER TO postgres;
 
 --
--- TOC entry 219 (class 1259 OID 46075)
+-- TOC entry 219 (class 1259 OID 46901)
 -- Name: autentificacion_de_usuarios; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -132,7 +94,7 @@ CREATE TABLE public.autentificacion_de_usuarios (
 ALTER TABLE public.autentificacion_de_usuarios OWNER TO postgres;
 
 --
--- TOC entry 220 (class 1259 OID 46078)
+-- TOC entry 220 (class 1259 OID 46904)
 -- Name: empresa; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -145,7 +107,7 @@ CREATE TABLE public.empresa (
 ALTER TABLE public.empresa OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 46081)
+-- TOC entry 221 (class 1259 OID 46907)
 -- Name: habilitacion_profesional; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -166,7 +128,7 @@ CREATE TABLE public.habilitacion_profesional (
 ALTER TABLE public.habilitacion_profesional OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 46090)
+-- TOC entry 222 (class 1259 OID 46916)
 -- Name: pring; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -179,7 +141,7 @@ CREATE TABLE public.pring (
 ALTER TABLE public.pring OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 46095)
+-- TOC entry 223 (class 1259 OID 46921)
 -- Name: prinv; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -192,34 +154,35 @@ CREATE TABLE public.prinv (
 ALTER TABLE public.prinv OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 46100)
+-- TOC entry 224 (class 1259 OID 46926)
 -- Name: profesor; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.profesor (
     rut_profesor bigint NOT NULL,
-    nombre_profesor character varying(100)
+    nombre_profesor character varying(100),
+    correo_profesor character varying NOT NULL
 );
 
 
 ALTER TABLE public.profesor OWNER TO postgres;
 
 --
--- TOC entry 225 (class 1259 OID 46103)
+-- TOC entry 225 (class 1259 OID 46931)
 -- Name: prtut; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.prtut (
     id_habilitacion character varying(20) NOT NULL,
-    rut_empresa bigint,
-    rut_supervisor bigint
+    rut_empresa bigint NOT NULL,
+    rut_supervisor bigint NOT NULL
 );
 
 
 ALTER TABLE public.prtut OWNER TO postgres;
 
 --
--- TOC entry 226 (class 1259 OID 46106)
+-- TOC entry 226 (class 1259 OID 46934)
 -- Name: supervisor; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -233,35 +196,23 @@ CREATE TABLE public.supervisor (
 ALTER TABLE public.supervisor OWNER TO postgres;
 
 --
--- TOC entry 4957 (class 0 OID 46069)
+-- TOC entry 4957 (class 0 OID 46895)
 -- Dependencies: 217
 -- Data for Name: alumno; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.alumno VALUES (21472631, 'Nicolas Alvarado', 'nalvarado@ing.ucsc.cl');
-INSERT INTO public.alumno VALUES (21598739, 'Pablo Peña', 'ppenaj@ing.ucsc.cl');
-INSERT INTO public.alumno VALUES (20020823, 'Cristian Urrutia', 'currutiad@ing.ucsc.cl');
-INSERT INTO public.alumno VALUES (21403140, 'Felipe Acuña', 'facuna@ing.ucsc.cl');
-INSERT INTO public.alumno VALUES (11111111, 'DJFGKSGF', '@GMAIL.COM');
 
 
 --
--- TOC entry 4958 (class 0 OID 46072)
+-- TOC entry 4958 (class 0 OID 46898)
 -- Dependencies: 218
 -- Data for Name: asigna; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.asigna VALUES ('21472631_2025-2', 12345678, 'Profesor_Guia');
-INSERT INTO public.asigna VALUES ('21472631_2025-2', 13521345, 'Profesor_Comision');
-INSERT INTO public.asigna VALUES ('21598739_2025-2', 13521345, 'Profesor_Guia');
-INSERT INTO public.asigna VALUES ('21598739_2025-2', 12345678, 'Profesor_Comision');
-INSERT INTO public.asigna VALUES ('20020823_2025-2', 12345678, 'Profesor_Guia');
-INSERT INTO public.asigna VALUES ('20020823_2025-2', 13521345, 'Profesor_Comision');
-INSERT INTO public.asigna VALUES ('21403140_2025-2', 12345678, 'Profesor_Tutor');
 
 
 --
--- TOC entry 4959 (class 0 OID 46075)
+-- TOC entry 4959 (class 0 OID 46901)
 -- Dependencies: 219
 -- Data for Name: autentificacion_de_usuarios; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -269,78 +220,63 @@ INSERT INTO public.asigna VALUES ('21403140_2025-2', 12345678, 'Profesor_Tutor')
 
 
 --
--- TOC entry 4960 (class 0 OID 46078)
+-- TOC entry 4960 (class 0 OID 46904)
 -- Dependencies: 220
 -- Data for Name: empresa; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.empresa VALUES (11111111, 'Flipflop INC');
 
 
 --
--- TOC entry 4961 (class 0 OID 46081)
+-- TOC entry 4961 (class 0 OID 46907)
 -- Dependencies: 221
 -- Data for Name: habilitacion_profesional; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.habilitacion_profesional VALUES (DEFAULT, 21472631, 2025, 1, 'AAAAADJFKDFG', NULL, NULL);
-INSERT INTO public.habilitacion_profesional VALUES (DEFAULT, 21598739, 2025, 1, 'lskdjgskldfgjskfg', NULL, NULL);
-INSERT INTO public.habilitacion_profesional VALUES (DEFAULT, 21472631, 2025, 2, 'SDGSDFGASDHBFGKSHJDFGSDGSDFGASDHBFGKSHJDFGSDGSDFGASDHBFGKSHJDFGSDGSDFGASDHBFGKSHJDFGSDGSDFGASDHBFGKSHJDFG', NULL, NULL);
-INSERT INTO public.habilitacion_profesional VALUES (DEFAULT, 21598739, 2025, 2, 'DJGSLKDFJGLKSJDJGSLKDFJGLKSJDJGSLKDFJGLKSJDJGSLKDFJGLKSJDJGSLKDFJGLKSJ', NULL, NULL);
-INSERT INTO public.habilitacion_profesional VALUES (DEFAULT, 20020823, 2025, 2, 'DFGSGFDFGSGFDFGSGFDFGSGFDFGSGFDFGSGFDFGSGFDFGSGFDFGSGFDFGSGFDFGSGFDFGSGF', NULL, NULL);
-INSERT INTO public.habilitacion_profesional VALUES (DEFAULT, 21403140, 2025, 2, 'KALFDGJHKSSJKLJKLSGFDJKLJGSLKFGJSLKFJGSJKLDFGJSLKDFJGSKLFGJSLKDFJGLKSFGDS', NULL, NULL);
 
 
 --
--- TOC entry 4962 (class 0 OID 46090)
+-- TOC entry 4962 (class 0 OID 46916)
 -- Dependencies: 222
 -- Data for Name: pring; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.pring VALUES ('21472631_2025-1', 'a');
-INSERT INTO public.pring VALUES ('21472631_2025-2', 'HOLA');
-INSERT INTO public.pring VALUES ('21598739_2025-2', 'HOLA1');
 
 
 --
--- TOC entry 4963 (class 0 OID 46095)
+-- TOC entry 4963 (class 0 OID 46921)
 -- Dependencies: 223
 -- Data for Name: prinv; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.prinv VALUES ('20020823_2025-2', 'HOLA');
 
 
 --
--- TOC entry 4964 (class 0 OID 46100)
+-- TOC entry 4964 (class 0 OID 46926)
 -- Dependencies: 224
 -- Data for Name: profesor; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.profesor VALUES (12345678, 'NNN');
-INSERT INTO public.profesor VALUES (13521345, 'AAAA');
 
 
 --
--- TOC entry 4965 (class 0 OID 46103)
+-- TOC entry 4965 (class 0 OID 46931)
 -- Dependencies: 225
 -- Data for Name: prtut; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.prtut VALUES ('21403140_2025-2', 11111111, 23111333);
 
 
 --
--- TOC entry 4966 (class 0 OID 46106)
+-- TOC entry 4966 (class 0 OID 46934)
 -- Dependencies: 226
 -- Data for Name: supervisor; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.supervisor VALUES (23111333, 'Juan', 11111111);
 
 
 --
--- TOC entry 4785 (class 2606 OID 46110)
+-- TOC entry 4785 (class 2606 OID 46938)
 -- Name: alumno alumno_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -349,7 +285,7 @@ ALTER TABLE ONLY public.alumno
 
 
 --
--- TOC entry 4787 (class 2606 OID 46112)
+-- TOC entry 4787 (class 2606 OID 46940)
 -- Name: asigna asigna_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -358,7 +294,7 @@ ALTER TABLE ONLY public.asigna
 
 
 --
--- TOC entry 4789 (class 2606 OID 46114)
+-- TOC entry 4789 (class 2606 OID 46942)
 -- Name: autentificacion_de_usuarios autentificacion_de_usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -367,7 +303,7 @@ ALTER TABLE ONLY public.autentificacion_de_usuarios
 
 
 --
--- TOC entry 4791 (class 2606 OID 46116)
+-- TOC entry 4791 (class 2606 OID 46944)
 -- Name: empresa empresa_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -376,7 +312,7 @@ ALTER TABLE ONLY public.empresa
 
 
 --
--- TOC entry 4793 (class 2606 OID 46118)
+-- TOC entry 4793 (class 2606 OID 46946)
 -- Name: habilitacion_profesional habilitacion_profesional_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -385,7 +321,7 @@ ALTER TABLE ONLY public.habilitacion_profesional
 
 
 --
--- TOC entry 4795 (class 2606 OID 46120)
+-- TOC entry 4795 (class 2606 OID 46948)
 -- Name: pring pring_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -394,7 +330,7 @@ ALTER TABLE ONLY public.pring
 
 
 --
--- TOC entry 4797 (class 2606 OID 46122)
+-- TOC entry 4797 (class 2606 OID 46950)
 -- Name: prinv prinv_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -403,7 +339,7 @@ ALTER TABLE ONLY public.prinv
 
 
 --
--- TOC entry 4799 (class 2606 OID 46124)
+-- TOC entry 4799 (class 2606 OID 46952)
 -- Name: profesor profesor_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -412,7 +348,7 @@ ALTER TABLE ONLY public.profesor
 
 
 --
--- TOC entry 4801 (class 2606 OID 46126)
+-- TOC entry 4801 (class 2606 OID 46954)
 -- Name: prtut prtut_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -421,7 +357,7 @@ ALTER TABLE ONLY public.prtut
 
 
 --
--- TOC entry 4803 (class 2606 OID 46128)
+-- TOC entry 4803 (class 2606 OID 46956)
 -- Name: supervisor supervisor_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -430,7 +366,7 @@ ALTER TABLE ONLY public.supervisor
 
 
 --
--- TOC entry 4804 (class 2606 OID 46340)
+-- TOC entry 4804 (class 2606 OID 46957)
 -- Name: asigna fk_asigna_habilitacion; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -439,7 +375,7 @@ ALTER TABLE ONLY public.asigna
 
 
 --
--- TOC entry 4805 (class 2606 OID 46345)
+-- TOC entry 4805 (class 2606 OID 46962)
 -- Name: asigna fk_asigna_profesor; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -448,7 +384,7 @@ ALTER TABLE ONLY public.asigna
 
 
 --
--- TOC entry 4806 (class 2606 OID 46335)
+-- TOC entry 4806 (class 2606 OID 46967)
 -- Name: habilitacion_profesional habilitacion_profesional_rut_alumno_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -457,34 +393,34 @@ ALTER TABLE ONLY public.habilitacion_profesional
 
 
 --
--- TOC entry 4807 (class 2606 OID 46355)
+-- TOC entry 4807 (class 2606 OID 46972)
 -- Name: pring pring_id_habilitacion_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.pring
-    ADD CONSTRAINT pring_id_habilitacion_fkey FOREIGN KEY (id_habilitacion) REFERENCES public.habilitacion_profesional(id_habilitacion) ON DELETE CASCADE;
+    ADD CONSTRAINT pring_id_habilitacion_fkey FOREIGN KEY (id_habilitacion) REFERENCES public.habilitacion_profesional(id_habilitacion) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- TOC entry 4808 (class 2606 OID 46350)
+-- TOC entry 4808 (class 2606 OID 46977)
 -- Name: prinv prinv_id_habilitacion_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.prinv
-    ADD CONSTRAINT prinv_id_habilitacion_fkey FOREIGN KEY (id_habilitacion) REFERENCES public.habilitacion_profesional(id_habilitacion) ON DELETE CASCADE;
+    ADD CONSTRAINT prinv_id_habilitacion_fkey FOREIGN KEY (id_habilitacion) REFERENCES public.habilitacion_profesional(id_habilitacion) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- TOC entry 4809 (class 2606 OID 46154)
+-- TOC entry 4809 (class 2606 OID 46982)
 -- Name: prtut prtut_id_habilitacion_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.prtut
-    ADD CONSTRAINT prtut_id_habilitacion_fkey FOREIGN KEY (id_habilitacion) REFERENCES public.habilitacion_profesional(id_habilitacion);
+    ADD CONSTRAINT prtut_id_habilitacion_fkey FOREIGN KEY (id_habilitacion) REFERENCES public.habilitacion_profesional(id_habilitacion) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- TOC entry 4810 (class 2606 OID 46159)
+-- TOC entry 4810 (class 2606 OID 46987)
 -- Name: prtut prtut_rut_empresa_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -493,7 +429,7 @@ ALTER TABLE ONLY public.prtut
 
 
 --
--- TOC entry 4811 (class 2606 OID 46164)
+-- TOC entry 4811 (class 2606 OID 46992)
 -- Name: prtut prtut_rut_supervisor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -510,11 +446,11 @@ ALTER TABLE ONLY public.prtut
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;
 
 
--- Completed on 2025-10-30 01:24:50
+-- Completed on 2025-10-31 21:34:41
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict iHpgIujUnyoNBbJpgrNnB6VMFnINpkrD6c6FBIOor8H6f9JNkPQbX5P3zGa0UfG
+\unrestrict 1WDNOPlwAtbUwUJrd4vFThh7P9WgvmdiIudWwZBpxDdJi72IEtMr1XA0Sg7kLap
 
