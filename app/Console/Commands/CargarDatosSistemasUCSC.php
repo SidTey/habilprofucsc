@@ -111,9 +111,9 @@ class CargarDatosSistemasUCSC extends Command
             }
             
             if ($habilitacion->nota_final === null && $nota_final !== null) {
-                
-                $this->info('¡Nota encontrada para ' . $localAlumno->nombre_alumno . '! Forzando actualización a: ' . $nota_final);
-                
+
+                $this->info('¡Nota encontrada para ' . $localAlumno->nombre_alumno . ' Con nota: ' . $nota_final);
+
                 $affectedRows = DB::connection('pgsql')
                                   ->table('habilitacion_profesional')
                                   ->where('id_habilitacion', $habilitacion->id_habilitacion)
@@ -152,7 +152,8 @@ class CargarDatosSistemasUCSC extends Command
         } // <-- Cierre del foreach ($alumnosExternos...)
 
         // --- Mensajes Finales ---
-        $this->info('Alumnos sincronizados y Notas actualizadas.');
+        $this->info('Alumnos sincronizados: ' . $alumnosExternos->count());
+        $this->info('Notas sincronizadas: ' . HabilitacionProfesional::whereNotNull('nota_final')->count());
         $this->line("==================================================");
         $this->line("Sincronización completada exitosamente.");
         $this->line("==================================================");
