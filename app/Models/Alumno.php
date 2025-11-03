@@ -29,12 +29,4 @@ class Alumno extends Model
             'correo_alumno' => 'required|string|max:255|email'
         ];
     }
-
-    /**
-     * Relación con registros UCSC
-     */
-    public function registrosUcsc()
-    {
-        return $this->hasMany(RegistroUcsc::class);
-    }
 }

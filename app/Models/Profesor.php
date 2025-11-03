@@ -30,11 +30,4 @@ class Profesor extends Model
         ];
     }
 
-    /**
-     * Relación con registros UCSC
-     */
-    public function registrosUcsc()
-    {
-        return $this->hasMany(RegistroUcsc::class);
-    }
 }
