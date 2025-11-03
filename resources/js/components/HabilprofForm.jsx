@@ -315,16 +315,20 @@ function HabilprofForm() {
                                 <Form.Group className="mb-3" controlId="tipo_habilitacion">
                                     <Form.Label>Tipo de Habilitación</Form.Label>
                                     <div>
-                                        {['Proyecto de Ingeniería', 'Proyecto de Investigación', 'Práctica Tutelada'].map(tipo => (
+                                        {[
+                                            { value: 'PrIng', label: 'Proyecto de Ingeniería' },
+                                            { value: 'PrInv', label: 'Proyecto de Investigación' },
+                                            { value: 'PrTut', label: 'Práctica Tutelada' }
+                                        ].map(tipo => (
                                             <Form.Check
                                                 inline
-                                                key={tipo}
+                                                key={tipo.value}
                                                 type="radio"
                                                 name="tipo_habilitacion"
-                                                id={`tipo-${tipo}`}
-                                                label={tipo}
-                                                value={tipo}
-                                                checked={formData.tipo_habilitacion === tipo}
+                                                id={`tipo-${tipo.value}`}
+                                                label={tipo.label}
+                                                value={tipo.value}
+                                                checked={formData.tipo_habilitacion === tipo.value}
                                                 onChange={handleChange}
                                             />
                                         ))}
@@ -348,7 +352,7 @@ function HabilprofForm() {
                                 </Form.Group>
 
                                 {/* --- CAMPOS DINÁMICOS --- */}
-                                {(formData.tipo_habilitacion === 'Proyecto de Ingeniería' || formData.tipo_habilitacion === 'Proyecto de Investigación') && (
+                                {(formData.tipo_habilitacion === 'PrIng' || formData.tipo_habilitacion === 'PrInv') && (
                                     <PrIngInvFields 
                                         formData={formData} 
                                         handleChange={handleChange} 
@@ -357,7 +361,7 @@ function HabilprofForm() {
                                     />
                                 )}
 
-                                {formData.tipo_habilitacion === 'Práctica Tutelada' && (
+                                {formData.tipo_habilitacion === 'PrTut' && (
                                     <PrTutFields 
                                         formData={formData} 
                                         handleChange={handleChange} 
