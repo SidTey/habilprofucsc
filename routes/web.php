@@ -23,10 +23,6 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 // Vistas embebidas
-Route::get('/habilitacion/agregar', function () {
-    return view('AgregarHabilitacion');
-})->name('habilitacion.agregar');
-
 Route::get('/habilitacion/agregar-embed', function () {
     return view('AgregarHabilitacionEmbed');
 })->name('habilitacion.agregar.embed');

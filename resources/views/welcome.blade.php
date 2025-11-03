@@ -1,2 +1,0 @@
-<!DOCTYPE html>
-<!-- ACA MENU INICIO FUNCION DE LA VIEW -->
