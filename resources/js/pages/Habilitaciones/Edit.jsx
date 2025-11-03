@@ -14,18 +14,18 @@ import SelectInput from '@/Components/SelectInput';
  */
 const PrIngPrInvFields = ({ data, setData, errors, profesores }) => (
     <div className="p-4 mt-4 border rounded-lg">
-        <h3 className="text-lg font-medium">Datos de Proyecto (PrIng / PrInv)</h3>
+        <h3 className="text-lg font-medium">Datos de Proyecto</h3>
         
         {/* R2.6 Titulo */}
         <div className="mt-4">
-            <InputLabel htmlFor="titulo_proyecto_practica" value="Título del Proyecto (R2.6)" />
+            <InputLabel htmlFor="titulo_proyecto_practica" value="Título del Proyecto" />
             <TextInput id="titulo_proyecto_practica" name="titulo_proyecto_practica" value={data.titulo_proyecto_practica} className="mt-1 block w-full" onChange={(e) => setData('titulo_proyecto_practica', e.target.value)} />
             <InputError message={errors.titulo_proyecto_practica} className="mt-2" />
         </div>
 
         {/* R3.4.2.3.1 - Profesores */}
         <div className="mt-4">
-            <InputLabel htmlFor="rut_profesor_guia" value="Profesor Guía (R2.7)" />
+            <InputLabel htmlFor="rut_profesor_guia" value="Profesor Guía" />
             <SelectInput id="rut_profesor_guia" name="rut_profesor_guia" className="mt-1 block w-full" value={data.rut_profesor_guia} onChange={(e) => setData('rut_profesor_guia', e.target.value)}>
                 <option value="">-- Seleccione un profesor --</option>
                 {profesores.map(p => (
@@ -36,7 +36,7 @@ const PrIngPrInvFields = ({ data, setData, errors, profesores }) => (
         </div>
 
         <div className="mt-4">
-            <InputLabel htmlFor="rut_profesor_co_guia" value="Profesor Co-Guía (R2.15)" />
+            <InputLabel htmlFor="rut_profesor_co_guia" value="Profesor Co-Guía" />
             <SelectInput id="rut_profesor_co_guia" name="rut_profesor_co_guia" className="mt-1 block w-full" value={data.rut_profesor_co_guia} onChange={(e) => setData('rut_profesor_co_guia', e.target.value)}>
                 <option value="">-- Seleccione un profesor --</option>
                 {profesores.map(p => (
@@ -47,7 +47,7 @@ const PrIngPrInvFields = ({ data, setData, errors, profesores }) => (
         </div>
         
         <div className="mt-4">
-            <InputLabel htmlFor="rut_profesor_comision" value="Profesor Comisión (R2.14)" />
+            <InputLabel htmlFor="rut_profesor_comision" value="Profesor Comisión" />
             <SelectInput id="rut_profesor_comision" name="rut_profesor_comision" className="mt-1 block w-full" value={data.rut_profesor_comision} onChange={(e) => setData('rut_profesor_comision', e.target.value)}>
                 <option value="">-- Seleccione un profesor --</option>
                 {profesores.map(p => (
@@ -64,31 +64,31 @@ const PrIngPrInvFields = ({ data, setData, errors, profesores }) => (
  */
 const PrTutFields = ({ data, setData, errors, profesores }) => (
     <div className="p-4 mt-4 border rounded-lg">
-        <h3 className="text-lg font-medium">Datos de Práctica (PrTut)</h3>
+        <h3 className="text-lg font-medium">Datos de Práctica</h3>
         
         <div className="mt-4">
-            <InputLabel htmlFor="nombre_empresa" value="Nombre Empresa (R2.13)" />
+            <InputLabel htmlFor="nombre_empresa" value="Nombre Empresa" />
             <TextInput id="nombre_empresa" name="nombre_empresa" value={data.nombre_empresa} className="mt-1 block w-full" onChange={(e) => setData('nombre_empresa', e.target.value)} />
             <InputError message={errors.nombre_empresa} className="mt-2" />
         </div>
         <div className="mt-4">
-            <InputLabel htmlFor="rut_empresa" value="RUT Empresa (R2.12)" />
+            <InputLabel htmlFor="rut_empresa" value="RUT Empresa" />
             <TextInput id="rut_empresa" name="rut_empresa" value={data.rut_empresa} className="mt-1 block w-full" onChange={(e) => setData('rut_empresa', e.target.value)} />
             <InputError message={errors.rut_empresa} className="mt-2" />
         </div>
          <div className="mt-4">
-            <InputLabel htmlFor="nombre_supervisor" value="Nombre Supervisor (R2.11)" />
+            <InputLabel htmlFor="nombre_supervisor" value="Nombre Supervisor" />
             <TextInput id="nombre_supervisor" name="nombre_supervisor" value={data.nombre_supervisor} className="mt-1 block w-full" onChange={(e) => setData('nombre_supervisor', e.target.value)} />
             <InputError message={errors.nombre_supervisor} className="mt-2" />
         </div>
          <div className="mt-4">
-            <InputLabel htmlFor="rut_supervisor" value="RUT Supervisor (R2.10)" />
+            <InputLabel htmlFor="rut_supervisor" value="RUT Supervisor" />
             <TextInput id="rut_supervisor" name="rut_supervisor" value={data.rut_supervisor} className="mt-1 block w-full" onChange={(e) => setData('rut_supervisor', e.target.value)} />
             <InputError message={errors.rut_supervisor} className="mt-2" />
         </div>
         
         <div className="mt-4">
-            <InputLabel htmlFor="rut_profesor_tutor" value="Profesor Tutor (R2.9)" />
+            <InputLabel htmlFor="rut_profesor_tutor" value="Profesor Tutor " />
             <SelectInput id="rut_profesor_tutor" name="rut_profesor_tutor" className="mt-1 block w-full" value={data.rut_profesor_tutor} onChange={(e) => setData('rut_profesor_tutor', e.target.value)}>
                 <option value="">-- Seleccione un profesor --</option>
                 {profesores.map(p => (
@@ -179,23 +179,23 @@ export default function Edit({ auth, habilitacion, profesores, roles_actuales })
                             )}
 
                             {/* --- DATOS ALUMNO (SOLO LECTURA) --- */}
-                            <h3 className="text-lg font-medium">Datos del Alumno (No editable)</h3>
+                            <h3 className="text-lg font-medium">Datos del Alumno</h3>
                             <div className="mt-4 grid grid-cols-2 gap-4">
                                 <div>
-                                    <InputLabel htmlFor="rut_alumno" value="RUT Alumno (R1.1)" />
+                                    <InputLabel htmlFor="rut_alumno" value="RUT Alumno" />
                                     <TextInput id="rut_alumno" name="rut_alumno" value={data.rut_alumno} className="mt-1 block w-full bg-gray-100" readOnly />
                                 </div>
                                 <div>
-                                    <InputLabel htmlFor="nombre_alumno" value="Nombre Alumno (R1.2)" />
+                                    <InputLabel htmlFor="nombre_alumno" value="Nombre Alumno" />
                                     <TextInput id="nombre_alumno" name="nombre_alumno" value={data.nombre_alumno} className="mt-1 block w-full bg-gray-100" readOnly />
                                 </div>
                             </div>
                             
                             {/* --- DATOS HABILITACIÓN (OBLIGATORIOS) --- */}
-                            <h3 className="text-lg font-medium mt-6">Datos de la Habilitación (Editable)</h3>
+                            <h3 className="text-lg font-medium mt-6">Datos de la Habilitación</h3>
                             
                             <div className="mt-4">
-                                <InputLabel htmlFor="tipo_habilitacion" value="Tipo de Habilitación (R2.1)" />
+                                <InputLabel htmlFor="tipo_habilitacion" value="Tipo de Habilitación" />
                                 <SelectInput id="tipo_habilitacion" name="tipo_habilitacion" className="mt-1 block w-full" value={data.tipo_habilitacion} onChange={(e) => setData('tipo_habilitacion', e.target.value)}>
                                     <option value="PrIng">PrIng</option>
                                     <option value="PrInv">PrInv</option>
@@ -205,7 +205,7 @@ export default function Edit({ auth, habilitacion, profesores, roles_actuales })
                             </div>
 
                             <div className="mt-4">
-                                <InputLabel htmlFor="descripcion_habilitacion" value="Descripción (R2.3: Min 50, Max 500)" />
+                                <InputLabel htmlFor="descripcion_habilitacion" value="Descripción (Min 50, Max 500)" />
                                 <textarea
                                     id="descripcion_habilitacion" name="descripcion_habilitacion"
                                     value={data.descripcion_habilitacion}
@@ -218,12 +218,12 @@ export default function Edit({ auth, habilitacion, profesores, roles_actuales })
                             
                             <div className="mt-4 grid grid-cols-2 gap-4">
                                 <div>
-                                    <InputLabel htmlFor="año_semestre" value="Año Inicio (R2.4.1)" />
+                                    <InputLabel htmlFor="año_semestre" value="Año Inicio" />
                                     <TextInput id="año_semestre" name="año_semestre" value={data.año_semestre} className="mt-1 block w-full" onChange={(e) => setData('año_semestre', e.target.value)} />
                                     <InputError message={errors.año_semestre} className="mt-2" />
                                 </div>
                                 <div>
-                                    <InputLabel htmlFor="numero_semestre" value="Semestre Inicio (R2.4.2)" />
+                                    <InputLabel htmlFor="numero_semestre" value="Semestre Inicio" />
                                     <SelectInput id="numero_semestre" name="numero_semestre" className="mt-1 block w-full" value={data.numero_semestre} onChange={(e) => setData('numero_semestre', e.target.value)}>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
@@ -243,15 +243,15 @@ export default function Edit({ auth, habilitacion, profesores, roles_actuales })
                             }
 
                             {/* --- DATOS OPCIONALES (NOTA) --- */}
-                            <h3 className="text-lg font-medium mt-6">Datos Opcionales (Nota)</h3>
+                            <h3 className="text-lg font-medium mt-6">Datos Adicionales</h3>
                             <div className="mt-4 grid grid-cols-2 gap-4">
                                 <div>
-                                    <InputLabel htmlFor="nota_final" value="Nota Final (R1.8)" />
+                                    <InputLabel htmlFor="nota_final" value="Nota Final" />
                                     <TextInput id="nota_final" name="nota_final" value={data.nota_final} className="mt-1 block w-full" onChange={(e) => setData('nota_final', e.target.value)} />
                                     <InputError message={errors.nota_final} className="mt-2" />
                                 </div>
                                 <div>
-                                    <InputLabel htmlFor="fecha_nota" value="Fecha Nota (R1.9: DD/MM/AAAA)" />
+                                    <InputLabel htmlFor="fecha_nota" value="Fecha Nota (DD/MM/AAAA)" />
                                     <TextInput id="fecha_nota" name="fecha_nota" value={data.fecha_nota} className="mt-1 block w-full" onChange={(e) => setData('fecha_nota', e.target.value)} placeholder="Ej: 30/10/2025" />
                                     <InputError message={errors.fecha_nota} className="mt-2" />
                                 </div>
