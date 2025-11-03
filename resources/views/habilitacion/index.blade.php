@@ -1,11 +1,5 @@
 @section('content')
-<div style="max-width:1000px;margin:2rem auto;padding:1rem;">
-    <style>
-        /* clases utilitarias locales para evitar colocar Blade en atributos style */
-        .hp-visible { display: block; }
-        .hp-hidden { display: none; }
-        .hp-mb { margin-bottom: 1rem; }
-    </style>
+<div class="main-wrapper">
     <h1>Listado de Habilitaciones</h1>
 
     {{-- Pestañas simples --}} 
@@ -16,7 +10,7 @@
 
     {{-- Mensajes de error HTTP simple --}}
     @if (session('error'))
-        <div style="color:red">{{ session('error') }}</div>
+        <div class="error-message">{{ session('error') }}</div>
     @endif
 
     {{-- Formulario semestral --}}
@@ -44,7 +38,7 @@
     {{-- Resultados --}}
     @if (isset($results) && count($results))
         <h2>Resultados ({{ $tab ?? '' }})</h2>
-        <table border="1" cellpadding="6" cellspacing="0" style="width:100%;border-collapse:collapse;">
+        <table border="1" cellpadding="6" cellspacing="0">
             <thead>
                 <tr>
                     <th>Id</th>
@@ -68,7 +62,7 @@
                         <td>{{ $r->nombre_co_guia ?? '' }}</td>
                         <td>{{ $r->nombre_comision ?? '' }}</td>
                         <td>{{ $r->titulo_proyecto ?? $r->nombre_empresa ?? '' }}</td>
-                        <td style="max-width:300px">{{ \Illuminate\Support\Str::limit($r->descripcion_habilitacion, 250) }}</td>
+                        <td class="desc-limited">{{ \Illuminate\Support\Str::limit($r->descripcion_habilitacion, 250) }}</td>
                         <td>{{ $r->nota_final }}</td>
                     </tr>
                 @endforeach

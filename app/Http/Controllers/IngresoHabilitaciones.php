@@ -34,16 +34,8 @@ class IngresoHabilitaciones extends Controller
      */
     public function getProfesoresDisponibles(Request $request)
     {
-        $idHabilitacion = $request->input('id_habilitacion');
+        $profesores = Profesor::select('rut_profesor', 'nombre_profesor')->get();
         
-        // Excluir profesores ya asignados a esta habilitación
-        $profesoresAsignados = Asigna::where('id_habilitacion', $idHabilitacion)
-            ->pluck('rut_profesor');
-
-        $profesores = Profesor::select('rut_profesor', 'nombre_profesor')
-            ->whereNotIn('rut_profesor', $profesoresAsignados)
-            ->get();
-
         return response()->json([
             'success' => true,
             'data' => $profesores
