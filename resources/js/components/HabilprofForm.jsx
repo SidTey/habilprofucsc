@@ -190,7 +190,6 @@ function HabilprofForm() {
     const [alumnos, setAlumnos] = useState([]);
     const [profesores, setProfesores] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [loadingData, setLoadingData] = useState(true);
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -198,18 +197,15 @@ function HabilprofForm() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setLoadingData(true);
                 const [alumnosRes, profesRes] = await Promise.all([
                     axios.get('/api/alumnos-disponibles'),
                     axios.get('/api/profesores-disponibles')
                 ]);
-                setAlumnos(alumnosRes.data.data || []);
-                setProfesores(profesRes.data.data || []);
-                setLoadingData(false);
+                setAlumnos(alumnosRes.data.data);
+                setProfesores(profesRes.data.data);
             } catch (error) {
                 console.error("Error al cargar datos:", error);
                 setErrors({ general: 'No se pudieron cargar los alumnos o profesores.' });
-                setLoadingData(false);
             }
         };
         fetchData();
@@ -318,14 +314,13 @@ function HabilprofForm() {
                                 
                                 <Form.Group className="mb-3" controlId="tipo_habilitacion">
                                     <Form.Label>Tipo de Habilitación</Form.Label>
-                                    <div>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
                                         {[
                                             { value: 'PrIng', label: 'Proyecto de Ingeniería' },
                                             { value: 'PrInv', label: 'Proyecto de Investigación' },
                                             { value: 'PrTut', label: 'Práctica Tutelada' }
                                         ].map(tipo => (
                                             <Form.Check
-                                                inline
                                                 key={tipo.value}
                                                 type="radio"
                                                 name="tipo_habilitacion"
@@ -334,6 +329,7 @@ function HabilprofForm() {
                                                 value={tipo.value}
                                                 checked={formData.tipo_habilitacion === tipo.value}
                                                 onChange={handleChange}
+                                                style={{ margin: 0, whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}
                                             />
                                         ))}
                                     </div>
