@@ -46,9 +46,10 @@ class CargarDatosSistemasUCSC extends Command
             
   
             $validator = Validator::make($prof->toArray(), [
-                'rut_profesor' => ['required', 'integer', 'between:10000000,60000000'],
+                'rut_profesor' => ['required', 'integer', 'between:1000000,60000000'],
                 'nombre_profesor' => ['required', 'string', 'max:100', 'regex:/^[\pL\s\-]+$/u'],
-                'correo_profesor' => ['required', 'email:rfc,dns', 'max:255'],
+                //'correo_profesor' => ['required', 'email:rfc,dns', 'max:255'],
+                'correo_profesor' => ['required', 'email:rfc,dns', 'max:255', 'regex:/@ucsc\.cl$/i'],
             ]);
 
             if ($validator->fails()) {
@@ -79,7 +80,7 @@ class CargarDatosSistemasUCSC extends Command
             $validator = Validator::make($alumno->toArray(), [
                 'rut_alumno' => ['required', 'integer', 'between:1000000,60000000'],
                 'nombre_alumno' => ['required', 'string', 'max:100', 'regex:/^[\pL\s\-]+$/u'],
-                'correo_alumno' => ['required', 'email:rfc,dns', 'max:255'],
+                'correo_alumno' => ['required', 'email:rfc,dns', 'max:255', 'regex:/@ing\.ucsc\.cl$/i'],
             ]);
             if ($validator->fails()) { continue; }
 
@@ -99,18 +100,28 @@ class CargarDatosSistemasUCSC extends Command
                 continue; 
             }
             
-
+            // Obtener la nota de la relación
             $notaRelacion = $alumno->notaHabilitacion(); 
-            $nota_obj = $notaRelacion->first();
-            $nota_final = $nota_obj->nota ?? null; 
+            if (!$notaRelacion) {
+                $this->info('⚠️ Alumno ' . $localAlumno->nombre_alumno . ' no tiene función notaHabilitacion()');
+                continue;
+            }
 
+            $nota_obj = $notaRelacion->first();
+            if (!$nota_obj) {
+                $this->info('⚠️ No hay nota registrada para ' . $localAlumno->nombre_alumno);
+                continue;
+            }
+
+            $nota_final = $nota_obj->nota ?? null;
 
             $nota_final = ($nota_final === null) ? null : (float)$nota_final;
             if ($nota_final !== null && !($nota_final >= 1.0 && $nota_final <= 7.0)) {
                 $nota_final = null;
             }
             
-            if ($habilitacion->nota_final === null && $nota_final !== null) {
+            // 🔧 CORREGIDO: Ahora actualiza SIEMPRE si hay una nota válida
+            if ($nota_final !== null) {
 
                 $this->info('¡Nota encontrada para ' . $localAlumno->nombre_alumno . ' Con nota: ' . $nota_final);
 
@@ -140,11 +151,11 @@ class CargarDatosSistemasUCSC extends Command
             
                 Log::info('R1.13: Carga Habilprof Realizada (Nota Actualizada)', [
                     'Rut_Alumno' => $localAlumno->rut_alumno,
-                    'Nombre_Alumno' => $localAlumno->nombre,
-                    'Correo_Alumno' => $localAlumno->correo,
-                    'Rut_Profesor' => $profesorLocal->rut ?? $rut_profesor_asignado ?? 'N/A',
-                    'Nombre_Profesor' => $profesorLocal->nombre ?? 'N/A',
-                    'Correo_Profesor' => $profesorLocal->correo ?? 'N/A',
+                    'Nombre_Alumno' => $localAlumno->nombre_alumno,
+                    'Correo_Alumno' => $localAlumno->correo_alumno,
+                    'Rut_Profesor' => $profesorLocal->rut_profesor ?? $rut_profesor_asignado ?? 'N/A',
+                    'Nombre_Profesor' => $profesorLocal->nombre_profesor ?? 'N/A',
+                    'Correo_Profesor' => $profesorLocal->correo_profesor ?? 'N/A',
                     'Fecha_Ingreso' => $fecha_ingreso_sync->toDateTimeString(),
                     'Nota_Final' => $nota_final,
                 ]);
@@ -158,6 +169,8 @@ class CargarDatosSistemasUCSC extends Command
         $this->line("Sincronización completada exitosamente.");
         $this->line("==================================================");
         return 0; 
+
+        
         
     } 
 }
