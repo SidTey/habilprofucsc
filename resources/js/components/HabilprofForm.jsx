@@ -190,6 +190,7 @@ function HabilprofForm() {
     const [alumnos, setAlumnos] = useState([]);
     const [profesores, setProfesores] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingData, setLoadingData] = useState(true);
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -197,15 +198,18 @@ function HabilprofForm() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoadingData(true);
                 const [alumnosRes, profesRes] = await Promise.all([
                     axios.get('/api/alumnos-disponibles'),
                     axios.get('/api/profesores-disponibles')
                 ]);
-                setAlumnos(alumnosRes.data.data);
-                setProfesores(profesRes.data.data);
+                setAlumnos(alumnosRes.data.data || []);
+                setProfesores(profesRes.data.data || []);
+                setLoadingData(false);
             } catch (error) {
                 console.error("Error al cargar datos:", error);
                 setErrors({ general: 'No se pudieron cargar los alumnos o profesores.' });
+                setLoadingData(false);
             }
         };
         fetchData();
