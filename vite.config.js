@@ -1,18 +1,13 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import react from '@vitejs/plugin-react';
+import react from '@vitejs/plugin-react'; // <-- (A) Esta línea debe existir
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.jsx'],
+            input: ['resources/js/app.jsx'], // <-- (B) Asegúrate que la ruta es correcta
             refresh: true,
         }),
-        react({
-            // Disable fast refresh to avoid the preamble detection error in this environment
-            fastRefresh: false,
-            // Some plugin versions use `refresh` option name
-            refresh: false,
-        }),
+        react(), // <-- (C) Esta línea DEBE estar aquí
     ],
 });
