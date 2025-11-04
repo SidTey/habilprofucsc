@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
  *
  * Validaciones y mensajes según R4.4, R4.5 y R4.6.
  */
-class HabilitacionController extends Controller
+class ListadosController extends Controller
 {
     /**
      * Valida y parsea el campo `semestre_inicio`.
