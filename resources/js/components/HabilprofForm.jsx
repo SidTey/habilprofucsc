@@ -1,4 +1,3 @@
-// resources/js/components/HabilprofForm.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
@@ -10,7 +9,7 @@ import {
     Button, 
     Spinner, 
     Alert 
-} from 'react-bootstrap'; // ¡Ahora sí tienes esto instalado!
+} from 'react-bootstrap'; 
 
 // Componente para los campos de PrIng y PrInv
 const PrIngInvFields = ({ formData, handleChange, profesores, errors }) => (
