@@ -82,7 +82,7 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-
+#Bd habilprof
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
@@ -97,7 +97,23 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
+#fin Bd habilprof
 
+#Modulo fantasma
+        'db_fantasma' => [
+            'driver' => env('DB_FANTASMA_CONNECTION', 'pgsql'),
+            'host' => env('DB_FANTASMA_HOST', '127.0.0.1'),
+            'port' => env('DB_FANTASMA_PORT', '5432'),
+            'database' => env('DB_FANTASMA_DATABASE'), 
+            'username' => env('DB_FANTASMA_USERNAME', 'postgres'), 
+            'password' => env('DB_FANTASMA_PASSWORD', ''), 
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
+## Fin modulo fantasma
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
@@ -109,8 +125,6 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
     ],

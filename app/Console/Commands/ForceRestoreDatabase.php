@@ -48,18 +48,49 @@ class ForceRestoreDatabase extends Command
 
         $this->info("Usando psql: {$psqlPath}");
 
-        // Paso 1: DROP DATABASE IF EXISTS; CREATE DATABASE
-        $dropCreate = sprintf('DROP DATABASE IF EXISTS "%s"; CREATE DATABASE "%s";', $db, $db);
-        $process1 = new Process([$psqlPath, '-h', $host, '-p', (string)$port, '-U', $user, '-d', 'postgres', '-c', $dropCreate]);
-        $process1->setEnv(['PGPASSWORD' => $password]);
-        $this->info('Eliminando y creando la base de datos...');
-        $process1->run(function ($type, $buffer) {
+        // Terminar todas las conexiones existentes a la base de datos
+        $this->info('Terminando conexiones existentes a la base de datos...');
+        $terminateConnectionsSql = sprintf(
+            'SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = \'%s\' AND pid <> pg_backend_pid();',
+            $db
+        );
+        $processTerminate = new Process([$psqlPath, '-h', $host, '-p', (string)$port, '-U', $user, '-d', 'postgres', '-c', $terminateConnectionsSql]);
+        $processTerminate->setEnv(['PGPASSWORD' => $password]);
+        $processTerminate->run(function ($type, $buffer) {
             echo $buffer;
         });
 
-        if (!$process1->isSuccessful()) {
-            $this->error('Falló DROP/CREATE: ' . $process1->getErrorOutput());
-            Log::error('db:force-restore drop/create failed: ' . $process1->getErrorOutput());
+        if (!$processTerminate->isSuccessful()) {
+            $this->warn('No se pudieron terminar todas las conexiones: ' . $processTerminate->getErrorOutput());
+            // No es un error fatal, puede que no hubiera conexiones activas.
+        }
+
+
+        // Paso 1: DROP DATABASE IF EXISTS
+        $drop = sprintf('DROP DATABASE IF EXISTS "%s";', $db);
+        $processDrop = new Process([$psqlPath, '-h', $host, '-p', (string)$port, '-U', $user, '-d', 'postgres', '-c', $drop]);
+        $processDrop->setEnv(['PGPASSWORD' => $password]);
+        $this->info('Eliminando la base de datos...');
+        $processDrop->run(function ($type, $buffer) {
+            echo $buffer;
+        });
+        if (!$processDrop->isSuccessful()) {
+            $this->error('Falló DROP DATABASE: ' . $processDrop->getErrorOutput());
+            Log::error('db:force-restore drop failed: ' . $processDrop->getErrorOutput());
+            return 1;
+        }
+
+        // Paso 2: CREATE DATABASE
+        $create = sprintf('CREATE DATABASE "%s";', $db);
+        $processCreate = new Process([$psqlPath, '-h', $host, '-p', (string)$port, '-U', $user, '-d', 'postgres', '-c', $create]);
+        $processCreate->setEnv(['PGPASSWORD' => $password]);
+        $this->info('Creando la base de datos...');
+        $processCreate->run(function ($type, $buffer) {
+            echo $buffer;
+        });
+        if (!$processCreate->isSuccessful()) {
+            $this->error('Falló CREATE DATABASE: ' . $processCreate->getErrorOutput());
+            Log::error('db:force-restore create failed: ' . $processCreate->getErrorOutput());
             return 1;
         }
 

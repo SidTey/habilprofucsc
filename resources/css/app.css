@@ -1,11 +1,68 @@
-@import 'tailwindcss';
+/* resources/js/css/ucsc-theme.css */
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* Colores Corporativos UCSC */
+:root {
+  --ucsc-blue: #d6082b;
+  --ucsc-gold: #fafafa;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* Clases de utilidad */
+.text-ucsc {
+  color: var(--ucsc-blue) !important;
+}
+
+.bg-ucsc {
+  background-color: var(--ucsc-blue) !important;
+}
+
+/* Estilo del Header de la Card (¡Como en la vista previa que no viste!) */
+.ucsc-header {
+  background-color: var(--ucsc-blue);
+  border-bottom: 4px solid var(--ucsc-gold);
+}
+
+.ucsc-header h4,
+.ucsc-header p {
+  color: white;
+}
+
+/* Estilo del Botón Principal */
+.btn-ucsc {
+  background-color: var(--ucsc-blue);
+  border-color: var(--ucsc-blue);
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-ucsc:hover {
+  background-color: #004a99; /* Un azul más claro */
+  border-color: #004a99;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 51, 102, 0.2);
+}
+
+.btn-ucsc:disabled {
+  background-color: #003366;
+  border-color: #003366;
+  opacity: 0.7;
+}
+
+/* Ajustes a los radios */
+.form-check-input:checked {
+  background-color: var(--ucsc-blue);
+  border-color: var(--ucsc-blue);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.25);
+}
+
+/* Ajustes a los selects/inputs */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--ucsc-blue);
+  box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.25);
 }

@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('sync:ucsc')->everyMinute(); //esto se hace para que los datos se vayan subiendo periodicamente de la bd fantasma a la bd de habilprof
     }
 
     /**
