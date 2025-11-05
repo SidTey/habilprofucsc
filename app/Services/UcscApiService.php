@@ -25,20 +25,20 @@ class UcscApiService
             // Simulación de conexión con sistema UCSC
             // En producción, aquí iría la llamada real a la API de UCSC
             $response = $this->simularConexionUcsc('alumno', $rutAlumno);
-            
+
             if ($response['success']) {
                 return [
                     'success' => true,
                     'data' => $response['data']
                 ];
             }
-            
+
             return ['success' => false, 'message' => 'Alumno no encontrado en sistema UCSC'];
-            
+
         } catch (\Exception $e) {
             Log::error("Error conectando con sistema UCSC para alumno {$rutAlumno}: " . $e->getMessage());
             return [
-                'success' => false, 
+                'success' => false,
                 'message' => 'No se ha podido establecer conexión con los sistemas UCSC'
             ];
         }
@@ -53,20 +53,20 @@ class UcscApiService
             // Simulación de conexión con sistema UCSC
             // En producción, aquí iría la llamada real a la API de UCSC
             $response = $this->simularConexionUcsc('profesor', $rutProfesor);
-            
+
             if ($response['success']) {
                 return [
                     'success' => true,
                     'data' => $response['data']
                 ];
             }
-            
+
             return ['success' => false, 'message' => 'Profesor no encontrado en sistema UCSC'];
-            
+
         } catch (\Exception $e) {
             Log::error("Error conectando con sistema UCSC para profesor {$rutProfesor}: " . $e->getMessage());
             return [
-                'success' => false, 
+                'success' => false,
                 'message' => 'No se ha podido establecer conexión con los sistemas UCSC'
             ];
         }
