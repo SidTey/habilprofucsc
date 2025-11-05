@@ -4,14 +4,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class NominaAlumno extends Model
 {
-    protected $connection = 'db_fantasma'; // 1. Apunta a la BD fantasma
-    protected $table = 'nomina_alumno';    // 2. Nombre de la tabla fantasma
+    protected $connection = 'db_fantasma'; 
+    protected $table = 'nomina_alumno';    
     public $timestamps = false;
-    protected $primaryKey = 'rut_alumno';  // 3. Su ID es el RUT
+    protected $primaryKey = 'rut_alumno';  
     public $incrementing = false;
-    protected $keyType = 'int';            // 4. Es un entero
+    protected $keyType = 'int';            
 
-    // R1.11.1: Define la relación con la nota de Habilitación Profesional
     public function notaHabilitacion()
     {
         return $this->hasOne(NotasEnLinea::class, 'rut_alumno_n', 'rut_alumno')

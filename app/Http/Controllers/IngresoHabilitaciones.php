@@ -17,9 +17,7 @@ use App\Models\Prtut;
 
 class IngresoHabilitaciones extends Controller
 {
-    /**
-     * Obtener lista de alumnos disponibles (R2.19)
-     */
+    // obtiene lista de alumnos disponibles
     public function getAlumnosDisponibles()
     {
         $alumnos = Alumno::select('rut_alumno', 'nombre_alumno')->get();
@@ -29,25 +27,21 @@ class IngresoHabilitaciones extends Controller
         ]);
     }
 
-    /**
-     * Obtener lista de profesores disponibles
-     */
+    // obtiene lista de profesores disponibles
     public function getProfesoresDisponibles(Request $request)
     {
         $profesores = Profesor::select('rut_profesor', 'nombre_profesor')->get();
-        
+        // retorna en formato json para que se vea en el frontend bien, y no como un array como se extrae de la base de datos
         return response()->json([
             'success' => true,
             'data' => $profesores
         ]);
     }
 
-    /**
-     * Crear nueva habilitación profesional
-     */
+    //creacion de una nueva habilitacion profesional
     public function store(Request $request)
     {
-        // Validación inicial según R2.16 (campos obligatorios)
+        // validacion de los datos de todas las habilitaciones (PrIng, PrInv, PrTut)
         $validator = Validator::make($request->all(), [
             'rut_alumno' => 'required|integer|min:1000000|max:60000000',
             'tipo_habilitacion' => 'required|string|size:5|in:PrIng,PrInv,PrTut',
@@ -55,7 +49,7 @@ class IngresoHabilitaciones extends Controller
             'año_semestre' => 'required|integer|min:2020|max:2050',
             'numero_semestre' => 'required|integer|in:1,2',
         ]);
-
+        // si la validacion falla, retorna los errores en formato json.
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -66,7 +60,7 @@ class IngresoHabilitaciones extends Controller
         try {
             DB::beginTransaction();
 
-            // Crear habilitación profesional (sin id_habilitacion manual)
+            // Crear habilitación profesional (sin id_habilitacion manual, ya que este lo genera de base de datos de habilprof)
             $habilitacion = new HabilitacionProfesional();
             $habilitacion->rut_alumno = $request->rut_alumno;
             $habilitacion->descripcion_habilitacion = $request->descripcion_habilitacion;
@@ -74,32 +68,32 @@ class IngresoHabilitaciones extends Controller
             $habilitacion->numero_semestre = $request->input('numero_semestre');
             $habilitacion->save();
 
-            // Manually construct the ID based on DB generation logic to refetch the model
+            // recupera la habilitación recién creada para obtener su id_habilitacion
             $generatedId = $request->input('rut_alumno') . '_' . $request->input('año_semestre') . '-' . $request->input('numero_semestre');
-            $habilitacion = HabilitacionProfesional::find($generatedId);
-
+            $habilitacion = HabilitacionProfesional::find($generatedId); // esto usa el ID compuesto generado anteriormente 
+            
             if (!$habilitacion) {
                 throw new \Exception('Error al recuperar la habilitación recién creada.');
             }
 
-            // Procesar según tipo de habilitación
+            // procesar según tipo de habilitación
             if (in_array($request->tipo_habilitacion, ['PrIng', 'PrInv'])) {
-                $this->procesarPracticaIngenieriaInvestigacion($request, $habilitacion);
+                $this->procesarPracticaIngenieriaInvestigacion($request, $habilitacion); //procesa PrIng o PrInv
             } else {
-                $this->ProcesarPracticaTutelada($request, $habilitacion);
+                $this->procesarPracticaTutelada($request, $habilitacion); //procesa PrTut
             }
 
-            DB::commit();
+            DB::commit();  // confirma la transacción si todo salió bien en la base de datos
 
             // Cargar relaciones para la respuesta
             $habilitacion->load(['alumno', 'asignaciones.profesor']);
-
+            //envio de mensaje de exito del ingreso
             return response()->json([
                 'success' => true,
                 'message' => 'Se ha ingresado correctamente la Habilitacion Profesional',
                 'data' => $habilitacion
             ]);
-
+            // si hay algun error en el proceso, se captura la excepcion y se revierte la transaccion
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -109,35 +103,33 @@ class IngresoHabilitaciones extends Controller
         }
     }
 
-    /**
-     * Procesar habilitación tipo PrIng o PrInv
-     */
+    // Procesar habilitación tipo PrIng o PrInv
     private function procesarPracticaIngenieriaInvestigacion($request, $habilitacion)
     {
-        // Validaciones específicas
+        // Validaciones especificas de cada tipo habilitacion
         $validator = Validator::make($request->all(), [
             'titulo_proyecto' => 'required|string|min:3|max:100',
             'rut_profesor_guia' => 'required|integer|min:1000000|max:60000000',
             'rut_profesor_comision' => 'required|integer|min:1000000|max:60000000',
             'rut_profesor_co_guia' => 'nullable|integer|min:1000000|max:60000000',
         ]);
-
+        // si la validacion falla, lanza una excepcion con los errores
         if ($validator->fails()) {
             throw new \Illuminate\Validation\ValidationException($validator);
         }
 
-        // Validar que un profesor no tenga multiples roles
+        // validacion que un profesor no tenga multiples roles
         $profesores = array_filter([
             $request->input('rut_profesor_guia'),
             $request->input('rut_profesor_comision'),
             $request->input('rut_profesor_co_guia')
         ]);
-
-        if (count($profesores) !== count(array_unique($profesores))) {
+            // elimina valores nulos y verifica unicidad
+            if (count($profesores) !== count(array_unique($profesores))) {
             throw new \Exception('Un profesor no puede ser asignado a múltiples roles en la misma habilitación.');
         }
 
-        // Crear registro en tabla pring o prniv según corresponda
+        // crea registro en tabla pring o prniv según corresponda
         if ($request->tipo_habilitacion === 'PrIng') {
             Pring::create([
                 'id_habilitacion' => $habilitacion->id_habilitacion,
@@ -150,21 +142,19 @@ class IngresoHabilitaciones extends Controller
             ]);
         }
 
-        // Asignar profesores
+        // asigna profesores
         $this->asignarProfesor($habilitacion->id_habilitacion, $request->rut_profesor_guia, 'Profesor_Guia');
         $this->asignarProfesor($habilitacion->id_habilitacion, $request->rut_profesor_comision, 'Profesor_Comision');
-        
+        // asigna co-guia si se proporciono uno ya que este puede quedar nulo
         if ($request->filled('rut_profesor_co_guia')) {
             $this->asignarProfesor($habilitacion->id_habilitacion, $request->rut_profesor_co_guia, 'Profesor_Co_Guia');
         }
     }
 
-    /**
-     * Procesar habilitación tipo PrTut
-     */
+    // Procesar habilitación tipo PrTut
     private function ProcesarPracticaTutelada($request, $habilitacion)
     {
-        // Validaciones específicas
+        // Validaciones especificas de PrTut
         $validator = Validator::make($request->all(), [
             'rut_supervisor' => 'required|integer|min:1000000|max:60000000',
             'nombre_supervisor' => 'required|string|max:100',
@@ -172,18 +162,18 @@ class IngresoHabilitaciones extends Controller
             'nombre_empresa' => 'required|string|max:100',
             'rut_profesor_tutor' => 'required|integer|min:1000000|max:60000000',
         ]);
-
+        // si la validacion falla, lanza una excepcion con los errores
         if ($validator->fails()) {
             throw new \Illuminate\Validation\ValidationException($validator);
         }
 
-        // Crear o actualizar empresa
+        // crear o actualizar empresa
         $empresa = Empresa::updateOrCreate(
             ['rut_empresa' => $request->rut_empresa],
             ['nombre_empresa' => $request->nombre_empresa]
         );
 
-        // Crear o actualizar supervisor
+        // crear o actualizar supervisor
         $supervisor = Supervisor::updateOrCreate(
             ['rut_supervisor' => $request->rut_supervisor],
             [
@@ -192,20 +182,18 @@ class IngresoHabilitaciones extends Controller
             ]
         );
 
-        // Crear el registro en la tabla prtut
+        // crear el registro en la tabla prtut
         Prtut::create([
             'id_habilitacion' => $habilitacion->id_habilitacion,
             'rut_empresa' => $request->rut_empresa,
             'rut_supervisor' => $request->rut_supervisor,
         ]);
 
-        // Asignar profesor tutor
+        // asignar profesor tutor
         $this->asignarProfesor($habilitacion->id_habilitacion, $request->rut_profesor_tutor, 'Profesor_Tutor');
     }
 
-    /**
-     * Asignar profesor a habilitación
-     */
+    // asigna un profesor a una habilitacion con un rol especifico
     private function asignarProfesor($idHabilitacion, $rutProfesor, $rol)
     {
         return Asigna::create([
@@ -215,9 +203,7 @@ class IngresoHabilitaciones extends Controller
         ]);
     }
 
-    /**
-     * Obtener lista de habilitaciones profesionales
-     */
+    // obtiene todas las habilitaciones profesionales con sus relaciones
     public function index()
     {
         $habilitaciones = HabilitacionProfesional::with([
@@ -227,7 +213,7 @@ class IngresoHabilitaciones extends Controller
             'practica_nivelacion'
         ])->get();
 
-        // Agregar el tipo de habilitación basado en las relaciones
+        // agregar el tipo de habilitación basado en las relaciones
         $habilitaciones = $habilitaciones->map(function ($habilitacion) {
             $data = $habilitacion->toArray();
             if ($habilitacion->practica_ingenieria) {
@@ -239,7 +225,7 @@ class IngresoHabilitaciones extends Controller
             }
             return $data;
         });
-
+        // retorna las habilitaciones en formato json para el frontend
         return response()->json([
             'success' => true,
             'data' => $habilitaciones

@@ -18,9 +18,6 @@ class Alumno extends Model
         'correo_alumno'
     ];
 
-    /**
-     * Reglas de validación según requisitos R1.1, R1.2, R1.3
-     */
     public static function validationRules()
     {
         return [

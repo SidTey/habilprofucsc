@@ -18,7 +18,6 @@ class Prtut extends Model
         'rut_supervisor'
     ];
 
-    // Relación inversa con HabilitacionProfesional
     public function habilitacionProfesional()
     {
         return $this->belongsTo(HabilitacionProfesional::class, 'id_habilitacion', 'id_habilitacion');
