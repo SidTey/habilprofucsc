@@ -1,26 +1,57 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\ListadosController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LoginProfesorController;
 use App\Http\Middleware\AuthenticateUser;
 
-// Rutas públicas (sin autenticación)
+/*
+|--------------------------------------------------------------------------
+| Rutas Web
+|--------------------------------------------------------------------------
+|
+| Sistema con React para login y vistas Blade para dashboard.
+| La sesión se cierra al cerrar el navegador.
+|
+*/
+
+// Ruta raíz - Redirige al login o dashboard según autenticación
 Route::get('/', function () {
-    return view('habilitacion.test');
+    if (Auth::guard('profesor')->check()) {
+        return redirect('/dashboard');
+    }
+    return view('welcome'); // Login de React
 })->name('index');
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+// Login
+Route::get('/login', function () {
+    if (Auth::guard('profesor')->check()) {
+        return redirect('/dashboard');
+    }
+    return view('welcome'); // Login de React
+})->name('login');
 
-// Cerrar sesión
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/logout', [AuthController::class, 'logout']);
+Route::post('/login', [LoginProfesorController::class, 'loginWeb'])->name('login.post');
 
-// Dashboard principal
+// Dashboard - Requiere autenticación
 Route::get('/dashboard', function () {
-    return view('habilitacion.test');
+    if (!Auth::guard('profesor')->check()) {
+        return redirect('/login');
+    }
+    return view('dashboard');
 })->name('dashboard');
+
+// Logout
+Route::post('/logout', [LoginProfesorController::class, 'logoutWeb'])->name('logout');
+Route::get('/logout', [LoginProfesorController::class, 'logoutWeb']);
+
+// Ejemplo de ruta protegida por RUT admin. Para proteger otras rutas,
+// añade ->middleware(\App\Http\Middleware\CheckRutAdmin::class) en la definición.
+Route::get('/admin-only', function () {
+    return view('habilitacion.test');
+})->middleware(\App\Http\Middleware\CheckRutAdmin::class)->name('admin.only');
 
 // Vistas embebidas
 Route::get('/habilitacion/agregar-embed', function () {
