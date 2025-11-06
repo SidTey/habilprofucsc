@@ -12,10 +12,6 @@ import ListadoSemestral from './components/ListadoSemestral.jsx';
 
 // Componentes nuevos (funcionalidad de tu amigo)
 import Login from './components/Login';
-import UcscDataForm from './components/UcscDataForm';
-import UcscDataTable from './components/UcscDataTable';
-import UcscLogs from './components/UcscLogs';
-import HabilitacionTable from './components/HabilitacionTable';
 
 function App() {
     const path = window.location.pathname;

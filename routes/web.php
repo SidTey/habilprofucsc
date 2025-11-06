@@ -5,6 +5,15 @@ use App\Http\Controllers\HabilitacionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\AuthenticateUser;
 
+/*
+|--------------------------------------------------------------------------
+| Rutas Web
+|--------------------------------------------------------------------------
+|
+| Aquí definimos las rutas específicas ANTES del catch-all de React.
+|
+*/
+
 // Rutas públicas (sin autenticación)
 Route::get('/', function () {
     return view('habilitacion.test');
@@ -45,3 +54,16 @@ Route::post('/habilitacion/historico', [HabilitacionController::class, 'listadoH
 Route::get('/habilitacion/test', function(){ return view('habilitacion.test'); })->name('habilitacion.test');
 Route::get('/habilitacion/api/semestral', [HabilitacionController::class, 'listadoSemestralJson'])->name('habilitacion.api.semestral');
 Route::get('/habilitacion/api/historico', [HabilitacionController::class, 'listadoHistoricoJson'])->name('habilitacion.api.historico');
+
+/*
+|--------------------------------------------------------------------------
+| RUTA "CATCH-ALL" PARA REACT (del amigo)
+|--------------------------------------------------------------------------
+|
+| Esta ruta debe ir AL FINAL para que React Router maneje las rutas SPA.
+| Carga resources/views/welcome.blade.php que contiene la app de React.
+|
+*/
+Route::get('/{any?}', function () {
+    return view('welcome'); // Carga la app React
+})->where('any', '.*');
