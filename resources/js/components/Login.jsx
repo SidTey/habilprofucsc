@@ -3,12 +3,6 @@ import axios from 'axios';
 // Asegurar envío de cookies (sesión) en peticiones hacia el backend
 axios.defaults.withCredentials = true;
 
-/**
- * NOTA: Este componente asume que ya has cargado el CSS de Bootstrap
- * en tu archivo principal (como 'welcome.blade.php').
- */
-
-// Recibe la prop onLoginSuccess desde App.jsx
 function Login({ onLoginSuccess }) {
 
     // --- Estados para manejar el formulario ---
@@ -42,9 +36,8 @@ function Login({ onLoginSuccess }) {
             // Si axios.post falla (ej: 401, 422)
             console.error('Error en el login:', err.response);
 
-            // --- ¡CAMBIO IMPORTANTE PARA DEPURAR! ---
-            // Vamos a mostrar el error específico que envía Laravel,
-            // en lugar de un mensaje genérico.
+    
+
             if (err.response && err.response.data) {
                 if (err.response.data.message) {
                     // Causa 4 o 5 del Controller (ej: "El rut ingresado es incorrecto")
@@ -60,7 +53,7 @@ function Login({ onLoginSuccess }) {
             } else {
                 setError('RUT o contraseña incorrectos. (Error de red)');
             }
-            // --- FIN DEL CAMBIO ---
+
 
             setLoading(false); // Reactiva el botón
         }

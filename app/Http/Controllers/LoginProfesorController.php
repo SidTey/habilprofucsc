@@ -59,7 +59,6 @@ class LoginProfesorController extends Controller
         }
 
         // 4. Validar existencia del RUT (R5.2.1)
-        // ¡CAMBIO CLAVE! Buscamos en la tabla de autenticación, no en 'profesor'
         // Usamos find() porque 'rut_admin' es la Primary Key.
     $authData = AutentificacionDeUsuario::find($rut);
 
