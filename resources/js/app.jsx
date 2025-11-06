@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/app.css'; 
 import axios from 'axios';
 
+// Asegurar envío de cookies (sesión) en peticiones XHR hacia el backend
+axios.defaults.withCredentials = true;
 // Componentes originales (tu funcionalidad)
 import HabilprofForm from './components/HabilprofForm.jsx';
 import ListadoHistorico from './components/ListadoHistorico.jsx';
@@ -51,7 +53,7 @@ function App() {
 
     // Verificar sesión al cargar
     useEffect(() => {
-        axios.get('/user')
+        axios.get('/api/user')
             .then(response => {
                 setProfesor(response.data);
                 setIsLoggedIn(true);
@@ -136,7 +138,7 @@ function App() {
 
     const handleLogout = async () => {
         try {
-            await axios.post('/logout');
+            await axios.post('/api/logout');
             setIsLoggedIn(false);
             setProfesor(null);
         } catch (error) {

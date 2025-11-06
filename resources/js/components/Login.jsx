@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+// Asegurar envío de cookies (sesión) en peticiones hacia el backend
+axios.defaults.withCredentials = true;
 
 /**
  * NOTA: Este componente asume que ya has cargado el CSS de Bootstrap
@@ -28,7 +30,7 @@ function Login({ onLoginSuccess }) {
 
         try {
             // Llama a la ruta POST /api/login (la correcta)
-            const response = await axios.post('/login', {
+            const response = await axios.post('/api/login', {
                 rut_profesor: rut,
                 password: password,
             });
@@ -197,8 +199,8 @@ function Login({ onLoginSuccess }) {
 
                             {/* Logo y Título */}
                             <div className="mb-4">
-                                <img
-                                  src="/images/logo-ucsc-color.png" // ¡Recuerda tener esta imagen en public/images/!
+                                                                <img
+                                                                    src="/images/ucsc-hero.svg" // Usar logo disponible en public/images/
                                   alt="Logo UCSC"
                                   style={{ height: '50px' }}
                                   className="mb-2"
