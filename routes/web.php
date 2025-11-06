@@ -15,10 +15,8 @@ use App\Http\Middleware\AuthenticateUser;
 |
 */
 
-// Rutas públicas (sin autenticación)
-Route::get('/', function () {
-    return view('habilitacion.test');
-})->name('index');
+// Ruta raíz - Redirige al login o dashboard según estado de autenticación
+Route::get('/', [LoginProfesorController::class, 'showLogin'])->name('index');
 
 // Login/Logout con LoginProfesorController (unificado con sistema del amigo)
 Route::get('/login', [LoginProfesorController::class, 'showLogin'])->name('login');
