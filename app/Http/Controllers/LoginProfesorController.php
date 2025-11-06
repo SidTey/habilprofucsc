@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
 use App\Models\AutentificacionDeUsuario;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -92,11 +93,14 @@ class LoginProfesorController extends Controller
 
     /**
      * Cierra la sesión del usuario (R5.8).
+     * Compatible con sistema original (AuthController) y nuevo sistema (React).
      */
     public function destroy(Request $request)
     {
+        // Logout del guard 'profesor' (sistema nuevo React)
         Auth::guard('profesor')->logout();
 
+        // Limpiar sesión completa (compatible con sistema original)
         $request->session()->invalidate(); // R5.8.1
         $request->session()->regenerateToken();
 
@@ -108,11 +112,82 @@ class LoginProfesorController extends Controller
      */
     public function user(Request $request)
     {
-
         // Obtenemos el modelo de Autenticación
         $authData = $request->user('profesor');
 
         // Devolvemos el modelo de Profesor asociado (que tiene el nombre)
         return $authData ? $authData->profesor : null;
+    }
+
+    /**
+     * === MÉTODOS COMPATIBLES CON TU SISTEMA ORIGINAL (AuthController) ===
+     */
+
+    /**
+     * Mostrar formulario de login (compatible con rutas web originales)
+     */
+    public function showLogin()
+    {
+        // Si ya está autenticado con el guard 'profesor', redirigir al dashboard
+        if (Auth::guard('profesor')->check()) {
+            return redirect()->route('dashboard');
+        }
+        
+        // Si hay sesión manual del sistema original
+        if (Session::has('user_authenticated')) {
+            return redirect()->route('dashboard');
+        }
+        
+        return view('login');
+    }
+
+    /**
+     * Procesar login (versión web/blade compatible con sistema original)
+     * Alternativa al método store() para rutas web tradicionales
+     */
+    public function loginWeb(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $username = $request->input('username');
+        $password = $request->input('password');
+
+        try {
+            // Intentar login con guard 'profesor' usando rut_profesor
+            // Asumiendo que username puede ser el RUT
+            $credentials = [
+                'rut_profesor' => $username,
+                'password' => $password
+            ];
+
+            if (Auth::guard('profesor')->attempt($credentials, $request->boolean('remember'))) {
+                $request->session()->regenerate();
+                
+                // Compatibilidad: Guardar también en sesión manual
+                $authUser = Auth::guard('profesor')->user();
+                Session::put('user_authenticated', true);
+                Session::put('user_id', $authUser->rut_profesor);
+                Session::put('username', $authUser->correo_profesor);
+
+                return redirect()->route('dashboard');
+            } else {
+                return back()->with('error', 'Usuario o contraseña incorrectos');
+            }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al intentar iniciar sesión: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Cerrar sesión (versión web/blade compatible con sistema original)
+     */
+    public function logoutWeb()
+    {
+        Auth::guard('profesor')->logout();
+        Session::flush();
+        return redirect()->route('login')->with('message', 'Sesión cerrada exitosamente');
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HabilitacionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LoginProfesorController;
 use App\Http\Middleware\AuthenticateUser;
 
 /*
@@ -19,12 +20,13 @@ Route::get('/', function () {
     return view('habilitacion.test');
 })->name('index');
 
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+// Login/Logout con LoginProfesorController (unificado con sistema del amigo)
+Route::get('/login', [LoginProfesorController::class, 'showLogin'])->name('login');
+Route::post('/login', [LoginProfesorController::class, 'loginWeb'])->name('login.post');
 
-// Cerrar sesión
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/logout', [AuthController::class, 'logout']);
+// Cerrar sesión (unificado)
+Route::post('/logout', [LoginProfesorController::class, 'logoutWeb'])->name('logout');
+Route::get('/logout', [LoginProfesorController::class, 'logoutWeb']);
 
 // Dashboard principal
 Route::get('/dashboard', function () {
