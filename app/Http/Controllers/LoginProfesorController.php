@@ -125,6 +125,7 @@ class LoginProfesorController extends Controller
 
     /**
      * Mostrar formulario de login (compatible con rutas web originales)
+     * Retorna la SPA React que incluye el componente Login
      */
     public function showLogin()
     {
@@ -138,7 +139,8 @@ class LoginProfesorController extends Controller
             return redirect()->route('dashboard');
         }
         
-        return view('login');
+        // Retornar la vista welcome.blade.php que contiene la SPA React con Login
+        return view('welcome');
     }
 
     /**
