@@ -91,10 +91,10 @@ function ListadoSemestral() {
                                                         <td>{r.id_habilitacion}</td>
                                                         <td>{r.rut_alumno}</td>
                                                         <td>{r.nombre_alumno}</td>
-                                                        <td style={{ textAlign: 'center' }}>{r.rut_guia || ''}</td>
-                                                        <td style={{ textAlign: 'center' }}>{r.rut_co_guia || ''}</td>
-                                                        <td style={{ textAlign: 'center' }}>{r.rut_comision || ''}</td>
-                                                        <td style={{ textAlign: 'center' }}>{r.rut_tutor || ''}</td>
+                                                        <td style={{ textAlign: 'center' }}>{r.nombre_guia || ''}</td>
+                                                        <td style={{ textAlign: 'center' }}>{r.nombre_co_guia || ''}</td>
+                                                        <td style={{ textAlign: 'center' }}>{r.nombre_comision || ''}</td>
+                                                        <td style={{ textAlign: 'center' }}>{r.nombre_tutor || ''}</td>
                                                         <td>{titulo}</td>
                                                         <td>{desc}</td>
                                                         <td>{r.nota_final}</td>

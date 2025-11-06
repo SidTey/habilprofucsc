@@ -18,9 +18,7 @@ class Profesor extends Model
         'correo_profesor'
     ];
 
-    /**
-     * Reglas de validación según requisitos R1.4, R1.5, R1.7
-     */
+
     public static function validationRules()
     {
         return [
