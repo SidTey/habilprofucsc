@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Button } from 'react-bootstrap';
 import './bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/app.css'; 
@@ -32,8 +33,8 @@ function App() {
         return <ListadoSemestral />;
     }
     
-    // Si la ruta es para el formulario simple sin login
-    if (path.includes('agregar-habilitacion')) {
+    // Si la ruta es para el formulario de agregar (embed)
+    if (path.includes('agregar-embed')) {
         return (
             <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">            
                 <HabilprofForm />
@@ -43,25 +44,14 @@ function App() {
     
     // ============ FUNCIONALIDAD NUEVA (sistema con login) ============
     // Para el resto de rutas, usar el sistema con autenticación
-    const [isLoggedIn, setIsLoggedIn] = useState(null); // null = 'verificando...', false = 'no logueado', true = 'logueado'
+    // IMPORTANTE: La sesión NO persiste al recargar la página
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Siempre inicia en false (no autenticado)
     const [profesor, setProfesor] = useState(null);
-    const [activeTab, setActiveTab] = useState('form');
+    const [activeTab, setActiveTab] = useState('semestral'); // Cambiado a 'semestral' por defecto
     const [registros, setRegistros] = useState([]);
     const [logs, setLogs] = useState([]);
     const [habilitaciones, setHabilitaciones] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    // Verificar sesión al cargar
-    useEffect(() => {
-        axios.get('/api/user')
-            .then(response => {
-                setProfesor(response.data);
-                setIsLoggedIn(true);
-            })
-            .catch(error => {
-                setIsLoggedIn(false);
-            });
-    }, []);
 
     const cargarRegistros = async () => {
         try {
@@ -141,90 +131,87 @@ function App() {
             await axios.post('/api/logout');
             setIsLoggedIn(false);
             setProfesor(null);
+            // No redirigir, simplemente mostrar el login
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
+            // Incluso si hay error, cerrar sesión localmente
+            setIsLoggedIn(false);
+            setProfesor(null);
         }
     };
 
-    if (isLoggedIn === null) {
-        return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                <h1 className="text-2xl font-bold">Cargando Sistema HabilProf...</h1>
-            </div>
-        );
-    }
-
+    // Si no está autenticado, mostrar el login
     if (isLoggedIn === false) {
         return <Login onLoginSuccess={handleLoginSuccess} />;
     }
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header className="bg-blue-600 text-white p-4">
-                <div className="container mx-auto flex justify-between items-center">
-                    <div>
-                        <h1 className="text-2xl font-bold">Sistema HabilProf - UCSC</h1>
-                        <p className="text-blue-200">Carga automática de datos desde sistemas UCSC</p>
-                    </div>
-                    <div>
-                        <span className="mr-4">Hola, {profesor?.nombre_profesor || 'Usuario'}</span>
-                        <button
-                            onClick={handleLogout}
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                        >
-                            Cerrar Sesión
-                        </button>
-                    </div>
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            {/* Barra Superior Roja - Estilo UCSC */}
+            <nav className="navbar" style={{ 
+                background: '#d6082b', 
+                padding: '0.5rem 2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+            }}>
+                <div className="d-flex align-items-center gap-3">
+                    <img 
+                        src="/images/ucsc-hero.svg" 
+                        alt="UCSC Logo" 
+                        style={{ height: '40px', width: 'auto' }}
+                    />
+                    <span className="text-white fw-bold fs-5">HabilProf</span>
                 </div>
-            </header>
-
-            <main className="container mx-auto py-6 px-4">
-                <div className="mb-6">
-                    <nav className="flex space-x-8">
-                        <button
-                            onClick={() => handleTabChange('form')}
-                            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                                activeTab === 'form'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            Carga de Datos (R1)
-                        </button>
-                        <button
-                            onClick={() => handleTabChange('registros')}
-                            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                                activeTab === 'registros'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            Registros UCSC
-                        </button>
-                        <button
-                            onClick={() => handleTabChange('logs')}
-                            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                                activeTab === 'logs'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            Logs del Sistema (R1.13)
-                        </button>
-                        <button
-                            onClick={() => handleTabChange('habilitaciones')}
-                            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                                activeTab === 'habilitaciones'
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            }`}
-                        >
-                            Habilitaciones (R2)
-                        </button>
-                    </nav>
+                
+                <div className="d-flex gap-2">
+                    <Button 
+                        variant={activeTab === 'historico' ? 'light' : 'outline-light'}
+                        onClick={() => handleTabChange('historico')}
+                        size="sm"
+                    >
+                        Histórico
+                    </Button>
+                    <Button 
+                        variant={activeTab === 'semestral' ? 'light' : 'outline-light'}
+                        onClick={() => handleTabChange('semestral')}
+                        size="sm"
+                    >
+                        Semestral
+                    </Button>
+                    <Button 
+                        variant={activeTab === 'form' ? 'light' : 'outline-light'}
+                        onClick={() => handleTabChange('form')}
+                        size="sm"
+                    >
+                        Ingresar datos
+                    </Button>
+                    <Button 
+                        variant={activeTab === 'registros' ? 'light' : 'outline-light'}
+                        onClick={() => handleTabChange('registros')}
+                        size="sm"
+                    >
+                        Eliminar datos
+                    </Button>
+                    <Button 
+                        variant="danger"
+                        onClick={handleLogout}
+                        size="sm"
+                    >
+                        Cerrar sesión
+                    </Button>
                 </div>
+            </nav>
 
-                <div className="bg-white rounded-lg shadow-md p-6">
+            {/* Contenido Principal */}
+            <div style={{ flex: 1, background: '#f5f5f5' }}>
+                <div className="container-fluid py-4">
+                    {activeTab === 'historico' && (
+                        <ListadoHistorico />
+                    )}
+                    {activeTab === 'semestral' && (
+                        <ListadoSemestral />
+                    )}
                     {activeTab === 'form' && (
                         <UcscDataForm onDataSubmitted={handleDataSubmitted} />
                     )}
@@ -250,13 +237,7 @@ function App() {
                         />
                     )}
                 </div>
-            </main>
-
-            <footer className="bg-gray-800 text-white p-4 mt-8">
-                <div className="container mx-auto text-center">
-                    <p>&copy; 2025 Sistema HabilProf - Universidad Católica de la Santísima Concepción</p>
-                </div>
-            </footer>
+            </div>
         </div>
     );
 }

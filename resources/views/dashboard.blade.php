@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Prueba R4 — Habilitaciones (JSON)</title>
+    <title>HabilProf — Dashboard</title>
     @vite(['resources/css/app.css'])
   </head>
   <body>
@@ -11,8 +11,8 @@
     <nav class="navbar">
       <div class="navbar-left">
         <img src="{{ asset('images/ucsc-hero.svg') }}" alt="UCSC Logo" class="navbar-logo">
+        <h1>HabilProf</h1>
       </div>
-      <h1>HabilProf</h1>
       <div class="nav-menu">
         <button class="nav-btn active" data-section="historico">Histórico</button>
         <button class="nav-btn" data-section="semestral">Semestral</button>
@@ -50,27 +50,22 @@
 
     <script>
     // Navegación entre secciones
-    async function handleLogout() {
+    function handleLogout() {
       if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        try {
-          const response = await fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            credentials: 'include'
-          });
-          
-          if (response.ok) {
-            window.location.href = '/dashboard';
-          } else {
-            alert('Error al cerrar sesión');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('Error al cerrar sesión');
-        }
+        // Crear formulario POST para logout
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route("logout") }}';
+        
+        // Agregar token CSRF
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        form.appendChild(csrfInput);
+        
+        document.body.appendChild(form);
+        form.submit();
       }
     }
 

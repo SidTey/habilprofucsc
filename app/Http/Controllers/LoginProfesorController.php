@@ -18,8 +18,11 @@ class LoginProfesorController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Clave para el bloqueo de cuenta (R5.6)
-        $throttleKey = Str::lower($request->input('rut_profesor')) . '|' . $request->ip();
+    // Aceptar tanto 'rut_admin' (backup) como 'rut_profesor' (frontend)
+    $rut = $request->input('rut_admin') ?? $request->input('rut_profesor');
+
+    // 1. Clave para el bloqueo de cuenta (R5.6)
+    $throttleKey = Str::lower($rut) . '|' . $request->ip();
 
         // 2. Revisar si la cuenta está bloqueada (R5.6.1)
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
@@ -33,14 +36,20 @@ class LoginProfesorController extends Controller
         }
 
         // 3. Validar el formato de los campos (R5.3, R1.4, R5.1)
-        // (La validación de 'rut_profesor' es correcta, de 7 a 9 dígitos)
-        $validator = Validator::make($request->all(), [
-            'rut_profesor' => 'required|integer|min:1000000|max:999999999',
+        // (La validación de 'rut_admin' es correcta, de 7 a 9 dígitos)
+        // Normalizamos los datos para validación (usamos 'rut_admin' como campo canónico)
+        $dataToValidate = [
+            'rut_admin' => $rut,
+            'password' => $request->input('password'),
+        ];
+
+        $validator = Validator::make($dataToValidate, [
+            'rut_admin' => 'required|integer|min:1000000|max:999999999',
             'password' => 'required|string|min:8|max:30',
         ], [
-            'rut_profesor.min' => 'El formato del RUT no es válido.',
-            'rut_profesor.max' => 'El formato del RUT no es válido.',
-            'rut_profesor.required' => 'El rut ingresado es incorrecto.',
+            'rut_admin.min' => 'El formato del RUT no es válido.',
+            'rut_admin.max' => 'El formato del RUT no es válido.',
+            'rut_admin.required' => 'El rut ingresado es incorrecto.',
             'password.required' => 'La contraseña ingresada es incorrecta.',
         ]);
 
@@ -51,8 +60,8 @@ class LoginProfesorController extends Controller
 
         // 4. Validar existencia del RUT (R5.2.1)
         // ¡CAMBIO CLAVE! Buscamos en la tabla de autenticación, no en 'profesor'
-        // Usamos find() porque 'rut_profesor' es la Primary Key.
-        $authData = AutentificacionDeUsuario::find($request->rut_profesor);
+        // Usamos find() porque 'rut_admin' es la Primary Key.
+    $authData = AutentificacionDeUsuario::find($rut);
 
         if (!$authData) {
             RateLimiter::hit($throttleKey, 15 * 60);
@@ -64,9 +73,11 @@ class LoginProfesorController extends Controller
         // Laravel usará el 'password' del formulario y lo comparará con
         // la columna 'contraseña' de la BD, gracias a la función
         // getAuthPasswordName() que definimos en el modelo.
+        // Construir credenciales usando la columna PK del modelo
+        $idName = (new AutentificacionDeUsuario())->getKeyName();
         $credentials = [
-            'rut_profesor' => $request->rut_profesor,
-            'password' => $request->password
+            $idName => $rut,
+            'password' => $request->input('password')
         ];
 
         if (!Auth::guard('profesor')->attempt($credentials, $request->boolean('remember'))) {
@@ -79,15 +90,20 @@ class LoginProfesorController extends Controller
         $request->session()->regenerate(); // R5.5.1: Crear sesión
 
 
-        // Obtenemos el usuario logueado (que es un modelo 'AutentificacionDeUsuarios')
+        // Obtenemos el usuario logueado (que es un modelo 'AutentificacionDeUsuario')
         $authUser = Auth::guard('profesor')->user();
-        // Usamos la relación 'profesor()' que definimos para obtener los datos del profesor (nombre, etc.)
-        $profesor = $authUser->profesor;
+        
+        // Por ahora devolvemos un objeto simple con los datos del admin
+        // (La tabla autentificacion_de_usuario solo tiene rut_admin, no nombre)
+        $userData = [
+            'rut_admin' => $authUser->rut_admin,
+            'nombre_profesor' => 'Administrador', // Placeholder hasta tener relación con profesor
+        ];
 
-        // Devolvemos el profesor (con el nombre) y el mensaje de éxito
+        // Devolvemos los datos del usuario y el mensaje de éxito
         return response()->json([
             'message' => 'Inicio de sesión exitoso', // R5.5.3
-            'profesor' => $profesor // <-- Ahora enviamos el objeto Profesor, no el de Auth
+            'profesor' => $userData
         ], 200);
     }
 
@@ -115,8 +131,15 @@ class LoginProfesorController extends Controller
         // Obtenemos el modelo de Autenticación
         $authData = $request->user('profesor');
 
-        // Devolvemos el modelo de Profesor asociado (que tiene el nombre)
-        return $authData ? $authData->profesor : null;
+        if (!$authData) {
+            return response()->json(null, 401);
+        }
+
+        // Devolvemos un objeto simple con los datos del admin
+        return response()->json([
+            'rut_admin' => $authData->rut_admin,
+            'nombre_profesor' => 'Administrador', // Placeholder
+        ]);
     }
 
     /**
@@ -131,12 +154,12 @@ class LoginProfesorController extends Controller
     {
         // Si ya está autenticado con el guard 'profesor', redirigir al dashboard
         if (Auth::guard('profesor')->check()) {
-            return redirect()->route('dashboard');
+            return redirect('/dashboard');
         }
         
         // Si hay sesión manual del sistema original
         if (Session::has('user_authenticated')) {
-            return redirect()->route('dashboard');
+            return redirect('/dashboard');
         }
         
         // Retornar la vista welcome.blade.php que contiene la SPA React con Login
@@ -158,23 +181,23 @@ class LoginProfesorController extends Controller
         $password = $request->input('password');
 
         try {
-            // Intentar login con guard 'profesor' usando rut_profesor
+            // Intentar login con guard 'profesor' usando rut_admin
             // Asumiendo que username puede ser el RUT
             $credentials = [
-                'rut_profesor' => $username,
+                'rut_admin' => $username,
                 'password' => $password
             ];
 
-            if (Auth::guard('profesor')->attempt($credentials, $request->boolean('remember'))) {
+            if (Auth::guard('profesor')->attempt($credentials, false)) { // remember = false
                 $request->session()->regenerate();
                 
                 // Compatibilidad: Guardar también en sesión manual
                 $authUser = Auth::guard('profesor')->user();
                 Session::put('user_authenticated', true);
-                Session::put('user_id', $authUser->rut_profesor);
-                Session::put('username', $authUser->correo_profesor);
+                Session::put('user_id', $authUser->rut_admin);
+                Session::put('username', 'admin'); // Placeholder
 
-                return redirect()->route('dashboard');
+                return redirect('/dashboard');
             } else {
                 return back()->with('error', 'Usuario o contraseña incorrectos');
             }
@@ -190,6 +213,6 @@ class LoginProfesorController extends Controller
     {
         Auth::guard('profesor')->logout();
         Session::flush();
-        return redirect()->route('login')->with('message', 'Sesión cerrada exitosamente');
+        return redirect('/login')->with('message', 'Sesión cerrada exitosamente');
     }
 }

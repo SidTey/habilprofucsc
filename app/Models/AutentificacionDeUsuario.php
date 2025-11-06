@@ -9,19 +9,21 @@ class AutentificacionDeUsuario extends Authenticatable // ¡Importante!
 {
     use Notifiable;
 
-    protected $table = 'autentificacion_de_usuarios';
-    protected $primaryKey = 'rut_profesor';
+    // Ajuste: el volcado de la BD (database/backup/habilprof.sql) contiene
+    // la tabla `autentificacion_de_usuario` (singular) con PK `rut_admin`.
+    // Para evitar el error "Undefined table" mapeamos el modelo a esa tabla.
+    protected $table = 'autentificacion_de_usuario';
+    protected $primaryKey = 'rut_admin';
     public $incrementing = false;
     protected $keyType = 'integer';
-    public $timestamps = false; // Asumiendo que no tienes created_at/updated_at
+    public $timestamps = false; // no hay created_at/updated_at
 
     /**
      * Los atributos que se pueden asignar masivamente.
      */
     protected $fillable = [
-        'rut_profesor',
-        'correo_profesor',
-        'contraseña', // El nombre de tu columna en la BD
+        'rut_admin',
+        'contraseña', // El nombre de la columna en la BD según el dump
     ];
 
     /**
@@ -52,9 +54,10 @@ class AutentificacionDeUsuario extends Authenticatable // ¡Importante!
     /**
      * 3. Define la relación: Una autenticación pertenece a un Profesor.
      */
-    public function profesor()
-    {
-        // La llave foránea es 'rut_profesor', la llave local es 'rut_profesor'
-        return $this->belongsTo(Profesor::class, 'rut_profesor', 'rut_profesor');
-    }
+    // En el dump la tabla de admins no tiene relación directa con `profesor`.
+    // Si más adelante quieres mapearla, descomenta y ajusta las llaves.
+    // public function profesor()
+    // {
+    //     return $this->belongsTo(Profesor::class, 'rut_admin', 'rut_profesor');
+    // }
 }

@@ -33,10 +33,10 @@ Route::middleware([
     // Rutas que requieren estar logueado (auth:profesor)
     Route::middleware('auth:profesor')->group(function () {
         // Ruta de Logout: /api/logout
-        Route::post('/logout', [LoginProfesorController::class, 'destroy'])->name('logout');
+        Route::post('/logout', [LoginProfesorController::class, 'destroy'])->name('api.logout');
 
         // Ruta para verificar quién está logueado: /api/user
-        Route::get('/user', [LoginProfesorController::class, 'user'])->name('user');
+        Route::get('/user', [LoginProfesorController::class, 'user'])->name('api.user');
     });
 
 });

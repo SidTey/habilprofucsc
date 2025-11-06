@@ -35,9 +35,8 @@ function Login({ onLoginSuccess }) {
                 password: password,
             });
 
-            // Si axios.post tiene éxito, llamamos a la función de App.jsx
-            // para que actualice el estado de la aplicación.
-            onLoginSuccess(response.data.profesor);
+            // Login exitoso - redirigir al dashboard Blade
+            window.location.href = '/dashboard';
 
         } catch (err) {
             // Si axios.post falla (ej: 401, 422)
