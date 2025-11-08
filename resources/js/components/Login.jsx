@@ -204,7 +204,7 @@ function Login({ onLoginSuccess }) {
                                   style={{ height: '50px' }}
                                   className="mb-2"
                                 />
-                                <h1 className="h3 fw-bold text-dark mt-2">Portal Habilitacion Profesional</h1>
+                                <h1 className="h3 fw-bold text-dark mt-2">Portal Habilitación Profesional</h1>
                             </div>
 
                             {/* --- FORMULARIO CONECTADO A REACT --- */}
@@ -272,13 +272,13 @@ function Login({ onLoginSuccess }) {
 
                             {/* --- Bloques de Texto --- */}
                             <div className="banner-texto-wrapper">
-                                <div className="texto-bloque">HABILITACION</div>
+                                <div className="texto-bloque">HABILITACIÓN</div>
                                 <div className="texto-bloque">PROFESIONAL</div>
                                 <div className="admision-bloque">
                                     <strong>2026</strong>
-                                    <span className="hoy-box">HOY</span>
+                                    <span className="hoy-box">DINF</span>
                                 </div>
-                                <p className="carreras-texto">INGENIERIA CIVIL INFORMATICA</p>
+                                <p className="carreras-texto">INGENIERÍA CIVIL INFORMÁTICA</p>
                             </div>
                         </div>
                     </div>
