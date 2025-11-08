@@ -8,6 +8,7 @@ function Login({ onLoginSuccess }) {
     // --- Estados para manejar el formulario ---
     const [rut, setRut] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // Estado para el "ojito"
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -15,36 +16,24 @@ function Login({ onLoginSuccess }) {
      * Maneja el envío del formulario de login.
      */
     const handleSubmit = async (e) => {
-        // e.preventDefault() es CRUCIAL para evitar que la página se recargue
-        // y nos mande a la URL con GET (el error que tenías).
         e.preventDefault();
-
         setLoading(true);
-        setError(''); // Limpia errores anteriores
+        setError('');
 
         try {
-            // Llama a la ruta POST /api/login (la correcta)
             const response = await axios.post('/api/login', {
                 rut_profesor: rut,
                 password: password,
             });
-
             // Login exitoso - redirigir al dashboard Blade
             window.location.href = '/dashboard';
 
         } catch (err) {
-            // Si axios.post falla (ej: 401, 422)
             console.error('Error en el login:', err.response);
-
-    
-
             if (err.response && err.response.data) {
                 if (err.response.data.message) {
-                    // Causa 4 o 5 del Controller (ej: "El rut ingresado es incorrecto")
                     setError(err.response.data.message);
                 } else if (err.response.data.errors) {
-                    // Causa 3 del Controller (Error de validación)
-                    // Tomamos el primer error de la lista
                     const firstErrorKey = Object.keys(err.response.data.errors)[0];
                     setError(err.response.data.errors[firstErrorKey][0]);
                 } else {
@@ -53,9 +42,7 @@ function Login({ onLoginSuccess }) {
             } else {
                 setError('RUT o contraseña incorrectos. (Error de red)');
             }
-
-
-            setLoading(false); // Reactiva el botón
+            setLoading(false);
         }
     };
 
@@ -66,7 +53,7 @@ function Login({ onLoginSuccess }) {
             {`
                 :root {
                     --ucsc-red: #C8102E;
-                    --ucsc-dark: #231F20; /* Color de los bloques de texto */
+                    --ucsc-dark: #231F20;
                 }
 
                 /* --- Estilos Generales del Formulario --- */
@@ -101,34 +88,27 @@ function Login({ onLoginSuccess }) {
                     font-weight: 700;
                 }
 
-                /* --- Estilos del Banner --- */
+                /* --- Estilos del Banner (Sin cambios) --- */
                 .columna-banner {
                     background-color: var(--ucsc-red);
                     position: relative;
                     overflow: hidden;
                     min-height: 500px;
                 }
-
-                /* Capa de fondo (imagen) y overlay */
                 .columna-banner::before {
                     content: '';
                     position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-image: url('/images/banner-ucsc.jpg'); /* ¡La imagen de fondo! */
+                    top: 0; left: 0;
+                    width: 100%; height: 100%;
+                    background-image: url('/images/banner-ucsc.jpg');
                     background-size: cover;
                     background-position: center center;
                     background-repeat: no-repeat;
-
-                    /* Overlay para opacidad */
                     background-color: rgba(0, 0, 0, 0.5);
                     background-blend-mode: multiply;
                 }
-
                 .banner-wrapper-nuevo {
-                    position: relative; /* Se pone sobre el ::before */
+                    position: relative;
                     width: 100%;
                     height: 100%;
                     min-height: 600px;
@@ -137,8 +117,6 @@ function Login({ onLoginSuccess }) {
                     padding: 2rem 4rem;
                     color: white;
                 }
-
-                /* --- Estilos de Texto del Banner --- */
                 .banner-texto-wrapper {
                     position: relative;
                     z-index: 3;
@@ -176,7 +154,46 @@ function Login({ onLoginSuccess }) {
                     font-size: 1.5rem;
                     font-weight: 600;
                     margin-top: 1.5rem;
-                    color: white; /* Asegura que sea blanco */
+                    color: white;
+                }
+
+
+
+                /* 1. El contenedor DEBE envolver SÓLO al input y al botón */
+                .password-wrapper {
+                  position: relative;
+                }
+
+                /* 2. El icono se posiciona de forma absoluta DENTRO del wrapper */
+                .password-toggle-icon {
+                  position: absolute;
+                  top: 50%;
+                  right: 15px; /* Distancia desde la derecha */
+                  transform: translateY(-50%); /* Centrado vertical perfecto */
+
+                  background: transparent !important; /* Fondo transparente */
+                  border: none !important; /* Sin borde */
+                  padding: 0 !important;
+                  width: auto !important; /* Evita que ocupe todo el ancho posible */
+                  height: auto !important; /* Evita que ocupe toda la altura posible */
+                  line-height: 1 !important;
+
+                  cursor: pointer;
+                  color: #888 !important; /* Un gris suave y profesional */
+                  font-size: 1.1rem; /* Tamaño legible */
+
+                  transition: color 0.2s ease-in-out;
+                  outline: none; /* Sin contorno azul al hacer click */
+                }
+
+                /* 3. Efecto hover rojo que pediste */
+                .password-toggle-icon:hover {
+                  color: var(--ucsc-red) !important;
+                }
+
+                /* 4. Padding para el input, para que el texto no se escriba encima del icono */
+                .form-control-con-icono {
+                  padding-right: 45px !important; /* Espacio para el icono */
                 }
             `}
             </style>
@@ -189,13 +206,12 @@ function Login({ onLoginSuccess }) {
                     <div className="col-lg-6 bg-light d-flex align-items-center justify-content-center min-vh-100">
                         <div className="p-4 p-md-5" style={{ maxWidth: '500px', width: '100%' }}>
 
-                            {/* Logo y Título */}
                             <div className="mb-4">
-                                                                <img
-                                                                    src="/images/ucsc-hero.svg" // Usar logo disponible en public/images/
-                                  alt="Logo UCSC"
-                                  style={{ height: '50px' }}
-                                  className="mb-2"
+                                <img
+                                    src="/images/ucsc-hero.svg"
+                                    alt="Logo UCSC"
+                                    style={{ height: '50px' }}
+                                    className="mb-2"
                                 />
                                 <h1 className="h3 fw-bold text-dark mt-2">Portal Habilitación Profesional</h1>
                             </div>
@@ -203,7 +219,6 @@ function Login({ onLoginSuccess }) {
                             {/* --- FORMULARIO CONECTADO A REACT --- */}
                             <form onSubmit={handleSubmit}>
 
-                                {/* Mensaje de Error */}
                                 {error && (
                                     <div className="alert alert-danger mb-3">
                                         {error}
@@ -220,36 +235,51 @@ function Login({ onLoginSuccess }) {
                                         placeholder="Sin puntos, ni dígito verificador"
                                         autoComplete="username"
                                         required
-                                        value={rut} // Conectado al estado
-                                        onChange={(e) => setRut(e.target.value)} // Conectado al estado
+                                        value={rut}
+                                        onChange={(e) => setRut(e.target.value)}
                                     />
                                 </div>
 
+
                                 <div className="mb-4">
+                                    {/* La etiqueta (Label) va AFUERA del wrapper */}
                                     <label htmlFor="password" className="form-label">Contraseña</label>
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        name="password"
-                                        className="form-control form-control-lg"
-                                        placeholder="Contraseña"
-                                        autoComplete="current-password"
-                                        required
-                                        value={password} // Conectado al estado
-                                        onChange={(e) => setPassword(e.target.value)} // Conectado al estado
-                                    />
+
+                                    {/* Este div wrapper es clave para la posición */}
+                                    <div className="password-wrapper">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            id="password"
+                                            name="password"
+                                            className="form-control form-control-lg form-control-con-icono"
+                                            placeholder="Contraseña"
+                                            autoComplete="current-password"
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                        />
+
+                                        <button
+                                            type="button"
+                                            className="password-toggle-icon"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                                        >
+                                            <i className={showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}></i>
+                                        </button>
+                                    </div>
                                 </div>
+                                {/* --- FIN DEL BLOQUE DE CONTRASEÑA --- */}
 
                                 <button
                                     type="submit"
                                     className="btn btn-ucsc w-100 btn-lg"
-                                    disabled={loading} // Deshabilitado mientras carga
+                                    disabled={loading}
                                 >
                                     {loading ? 'Ingresando...' : 'INGRESAR'}
                                 </button>
                             </form>
 
-                            {/* Link Olvidar Contraseña (Sin link de registro) */}
                             <div className="text-center mt-4">
                                 <a href="#" className="link-ucsc small">
                                     Si olvidaste tu contraseña haz click aquí
@@ -261,9 +291,6 @@ function Login({ onLoginSuccess }) {
                     {/* --- Columna Derecha (Banner) --- */}
                     <div className="col-lg-6 d-none d-lg-flex columna-banner">
                         <div className="banner-wrapper-nuevo">
-                            {/* Los <img> fueron eliminados, ahora es un fondo CSS */}
-
-                            {/* --- Bloques de Texto --- */}
                             <div className="banner-texto-wrapper">
                                 <div className="texto-bloque">HABILITACIÓN</div>
                                 <div className="texto-bloque">PROFESIONAL</div>
@@ -279,7 +306,6 @@ function Login({ onLoginSuccess }) {
                 </div>
             </div>
 
-            {/* --- Footer (Copyright) --- */}
             <footer className="text-center p-3 bg-light text-muted small border-top">
                 © 2025 UCSC. Todos los derechos reservados
             </footer>
@@ -288,4 +314,3 @@ function Login({ onLoginSuccess }) {
 }
 
 export default Login;
-
