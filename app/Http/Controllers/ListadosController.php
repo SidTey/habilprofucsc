@@ -42,9 +42,10 @@ class ListadosController extends Controller
             $sem = (int) $request->input('semestre');
         }
 
+        // R4.5: Validación de formato y rango de semestre
         // Validaciones según R2.5
         if (!is_int($anio) || $anio < 2025 || $anio > 2050 || !in_array($sem, [1,2], true)) {
-            // Lanzar una excepción de validación para que la app muestre R4.4
+            // R4.5: Mensaje de error cuando Semestre_Inicio no es válido
             abort(422, 'El valor de Semestre_Inicio no es válido');
         }
 
@@ -56,18 +57,22 @@ class ListadosController extends Controller
      * En la BD los rut se guardan como bigint (sin puntos ni DV). Aquí normalizamos y
      * validamos que el valor resultante sea un número entero positivo.
      *
-     * Si no cumple, aborta con 422 y mensaje R4.5.
+     * Si no cumple, aborta con 422 y mensaje R4.6.
      */
     protected function normalizeRut($rutRaw)
     {
+        // R4.6: Validación de RUT nulo
         if (is_null($rutRaw)) {
+            // R4.6: Mensaje de error cuando Rut_Profesor no es válido
             abort(422, 'El valor de Rut_Profesor no es válido');
         }
 
         // Eliminar puntos, guiones y espacios, tomar sólo dígitos.
         $digits = preg_replace('/[^0-9]/', '', (string) $rutRaw);
 
+        // R4.6: Validación de formato de RUT
         if ($digits === '' || !ctype_digit($digits)) {
+            // R4.6: Mensaje de error cuando Rut_Profesor no es válido
             abort(422, 'El valor de Rut_Profesor no es válido');
         }
 
@@ -76,21 +81,25 @@ class ListadosController extends Controller
     }
 
     /**
-     * Listado semestral (R4.8)
+     * R4.1: Listado semestral (R4.9)
      *
      * Entrada: semestre_inicio (obligatorio)
      * Salida: vista con listado según tipo de habilitación
      */
     public function listadoSemestral(Request $request)
     {
-        // Validar que venga semestre_inicio (R4.1 y R4.3)
+        // R4.2: Validación de presencia de semestre_inicio
+        // R4.5: Validar que venga semestre_inicio
         if (!$request->filled('semestre_inicio')) {
+            // R4.5: Mensaje de error cuando Semestre_Inicio no es válido
             abort(422, 'El valor de Semestre_Inicio no es válido');
         }
 
         [$anio, $sem] = $this->parseSemestre($request);
 
-        // Consultar habilitaciones del semestre
+        // R4.9: Consultar habilitaciones del semestre
+        // R4.9.1: Para Proyecto de Grado e Investigación - incluye profesores guía, co-guía y comisión
+        // R4.9.2: Para Práctica Profesional - incluye profesor tutor, supervisor y empresa
         $habilitaciones = DB::table('habilitacion_profesional as hp')
             ->join('alumno as a', 'a.rut_alumno', '=', 'hp.rut_alumno')
             ->leftJoin('asigna as guia', function($join){
@@ -153,32 +162,37 @@ class ListadosController extends Controller
     }
 
     /**
-     * Listado histórico (R4.9)
+     * R4.1: Listado histórico (R4.10)
      *
      * Entrada: rut_profesor (obligatorio), semestre_inicio (obligatorio)
      */
     public function listadoHistorico(Request $request)
     {
-        // Validar presencia
+        // R4.3: Validación de presencia de rut_profesor y semestre_inicio
+        // R4.6: Validar presencia de rut_profesor
         if (!$request->filled('rut_profesor')) {
+            // R4.6: Mensaje de error cuando Rut_Profesor no es válido
             abort(422, 'El valor de Rut_Profesor no es válido');
         }
 
+        // R4.5: Validar presencia de semestre_inicio
         if (!$request->filled('semestre_inicio')) {
+            // R4.5: Mensaje de error cuando Semestre_Inicio no es válido
             abort(422, 'El valor de Semestre_Inicio no es válido');
         }
 
         $rut = $this->normalizeRut($request->input('rut_profesor'));
 
-        // Comprobar que el profesor existe en el sistema (R4.6)
+        // R4.7: Comprobar que el profesor existe en el sistema
         $exists = DB::table('profesor')->where('rut_profesor', $rut)->exists();
         if (!$exists) {
+            // R4.7: Mensaje de error cuando Rut_Profesor no se encuentra registrado
             abort(404, 'El valor de Rut_Profesor no se encuentra en registrado en el sistema "Habilprof"');
         }
 
         [$anio, $sem] = $this->parseSemestre($request);
 
-        // Consultar habilitaciones donde participa ese profesor en el semestre
+        // R4.10: Consultar habilitaciones donde participa ese profesor en el semestre
         $rows = DB::table('asigna as asg')
             ->join('habilitacion_profesional as hp', 'hp.id_habilitacion', '=', 'asg.id_habilitacion')
             ->join('alumno as a', 'a.rut_alumno', '=', 'hp.rut_alumno')
@@ -217,11 +231,12 @@ class ListadosController extends Controller
     }
 
     /**
-     * Endpoint JSON para pruebas: listado semestral
+     * R4.8: Endpoint JSON para pruebas: listado semestral
      * Uso: GET /habilitacion/api/semestral?semestre_inicio=2025-1
      */
     public function listadoSemestralJson(Request $request)
     {
+        // R4.2: Validación de presencia de semestre_inicio
         if (!$request->filled('semestre_inicio')) {
             return response()->json(['error' => 'Semestre_Inicio es obligatorio'], 422);
         }
@@ -283,19 +298,22 @@ class ListadosController extends Controller
     }
 
     /**
-     * Endpoint JSON para pruebas: listado histórico
+     * R4.8: Endpoint JSON para pruebas: listado histórico
      * Uso: GET /habilitacion/api/historico?rut_profesor=11111111&semestre_inicio=2025-1
      */
     public function listadoHistoricoJson(Request $request)
     {
+        // R4.3: Validación de presencia de rut_profesor
         if (!$request->filled('rut_profesor')) {
             return response()->json(['error' => 'Rut_Profesor es obligatorio'], 422);
         }
+        // R4.3: Validación de presencia de semestre_inicio
         if (!$request->filled('semestre_inicio')) {
             return response()->json(['error' => 'Semestre_Inicio es obligatorio'], 422);
         }
 
         $rut = $this->normalizeRut($request->input('rut_profesor'));
+        // R4.7: Verificación de existencia del profesor
         $exists = DB::table('profesor')->where('rut_profesor', $rut)->exists();
         if (!$exists) {
             return response()->json(['error' => 'Rut no encontrado en el sistema'], 404);

@@ -107,7 +107,7 @@ function ListadoSemestral() {
                             )}
 
                             {!loading && results.length === 0 && semestre && !error && (
-                                <p className="mt-3">No hay resultados.</p>
+                                <p className="mt-3">no hay resultados.</p>
                             )}
                         </Card.Body>
                     </Card>

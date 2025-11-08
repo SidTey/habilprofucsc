@@ -1,0 +1,116 @@
+========================================
+   INFORME DE CONTRIBUCIONES DE CÓDIGO
+========================================
+Fecha: 06/11/2025
+Repositorio: habilprofucsc
+Rama actual: Pablo
+
+RESUMEN GENERAL
+===============
+Total colaboradores: 5 (SHMEBUU, wualala, SidTey, Currutiad, dev)
+Ramas analizadas: todas (main, Pablo, Nico-Alvarado, CristianUrrutia, Login, Login-Definitivo, final)
+
+CONTRIBUCIONES POR COLABORADOR
+================================
+
+Colaborador: SHMEBUU
+-----------------------------------------
+  Commits: 34
+  Líneas agregadas:  2,765
+  Líneas eliminadas: 1,512
+  Cambio neto:       +1,253 líneas
+  Porcentaje de código agregado: 32.45%
+  Porcentaje de código eliminado: 24.16%
+  Descripción: Mayor contribuidor individual del proyecto
+
+
+Colaborador: wualala
+-----------------------------------------
+  Commits: 6
+  Líneas agregadas:  2,632
+  Líneas eliminadas: 3,267
+  Cambio neto:       -635 líneas
+  Porcentaje de código agregado: 30.90%
+  Porcentaje de código eliminado: 52.20%
+  Descripción: Refactorización importante de código
+
+
+Colaborador: SidTey
+-----------------------------------------
+  Commits: 14 (13 como "Tu Nombre" + 1 como "Pablo Peña")
+  Líneas agregadas:  2,207
+  Líneas eliminadas: 734
+  Cambio neto:       +1,473 líneas
+  Porcentaje de código agregado: 25.92%
+  Porcentaje de código eliminado: 11.73%
+  Descripción: Contribuidor principal en funcionalidades
+
+
+Colaborador: Currutiad
+-----------------------------------------
+  Commits: 15
+  Líneas agregadas:  838
+  Líneas eliminadas: 127
+  Cambio neto:       +711 líneas
+  Porcentaje de código agregado: 9.84%
+  Porcentaje de código eliminado: 2.03%
+  Descripción: Desarrollo de componentes y controladores
+
+
+Colaborador: dev
+-----------------------------------------
+  Commits: 2
+  Líneas agregadas:  35
+  Líneas eliminadas: 610
+  Cambio neto:       -575 líneas
+  Porcentaje de código agregado: 0.41%
+  Porcentaje de código eliminado: 9.75%
+  Descripción: Configuración inicial y limpieza
+
+
+TOTALES DEL PROYECTO
+=====================
+Total de líneas agregadas: 8,517
+Total de líneas eliminadas: 6,257
+Total de cambios: 14,774 líneas modificadas
+Cambio neto total: +2,260 líneas
+Total de commits: 71
+
+
+ARCHIVOS MÁS MODIFICADOS
+=========================
+- package-lock.json (múltiples actualizaciones de dependencias)
+- resources/js/components/* (componentes React)
+- app/Http/Controllers/* (controladores Laravel)
+- app/Models/* (modelos de base de datos)
+- database/backup/habilprof.sql (respaldos de base de datos)
+- resources/views/* (vistas Blade)
+- config/* (archivos de configuración)
+
+
+RAMAS DEL PROYECTO
+==================
+- main (rama principal)
+- Pablo (rama actual)
+- Nico-Alvarado
+- CristianUrrutia
+- Login
+- Login-Definitivo
+- final
+
+
+NOTAS
+=====
+* Los porcentajes se calculan sobre el total de líneas agregadas/eliminadas en todo el proyecto
+* Los commits de merge no están incluidos en las estadísticas
+* Archivos binarios (imágenes) no se cuentan en las líneas de código
+* SidTey aparece en algunos commits como "Tu Nombre" o "Pablo Peña" debido a diferentes configuraciones de git
+
+
+ANÁLISIS DE ACTIVIDAD
+======================
+1. SHMEBUU: Líder del proyecto con 34 commits, responsable del 32.45% del código nuevo
+2. wualala: Encargado de refactorización masiva, eliminó más código del que agregó
+3. SidTey: Segundo mayor contribuidor con 25.88% del código nuevo
+4. Currutiad: Desarrollo consistente de features (15 commits)
+5. dev: Setup inicial del proyecto

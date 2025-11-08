@@ -46,7 +46,7 @@ class IngresoHabilitaciones extends Controller
             'rut_alumno' => 'required|integer|min:1000000|max:60000000',
             'tipo_habilitacion' => 'required|string|size:5|in:PrIng,PrInv,PrTut',
             'descripcion_habilitacion' => 'required|string|min:50|max:500',
-            'año_semestre' => 'required|integer|min:2020|max:2050',
+            'año_semestre' => 'required|integer|min:2025|max:2050',
             'numero_semestre' => 'required|integer|in:1,2',
         ]);
         // si la validacion falla, retorna los errores en formato json.

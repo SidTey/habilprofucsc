@@ -1,0 +1,371 @@
+R1. Carga automática de datos desde sistemas UCSC
+
+Entradas: Rut_Alumno, Nombre_Alumno, Correo_Alumno, Rut_Profesor, Nombre_Profesor, Correo_Profesor, Fecha_Ingreso, Nota_Final, Fecha nota.
+
+Requisitos de la función: 
+R1.1 El campo Rut_Alumno es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.2 El campo Nombre_Alumno es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R1.3 El campo Correo_Alumno debe aceptar caracteres alfanuméricos (Incluyendo “@” y “.”) de una longitud entre [1,255].
+R1.4 El campo Rut_Profesor es un número entero con rango [10000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.5 El campo Nombre_Profesor es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R1.6 El campo Correo_Profesor debe aceptar caracteres alfanuméricos (Incluyendo “@” y “.”) de una longitud entre [7,255].
+R1.7 El campo Fecha_Ingreso es un dato tipo Date de tamaño 10, con un formato de DD/MM/AAAA, donde DD, MM y AAAA son entero de [01,31], [01,12], [2025, 2050], respectivamente.
+R1.8 El campo Nota_Final es un dato tipo Float de tamaño 3, entre [1.00, 7.00] (Ejemplo: 6.56, 7.00, 3.43), este dato puede ser nulo.
+R1.9 El campo Fecha_nota es un dato tipo Date de tamaño 10, con un formato de DD/MM/AAAA, donde DD, MM y AAAA son entero de [01,31], [01,12], [2025, 2050], respectivamente.
+R1.10 Los requisitos anteriores son obligatorios para la carga de datos, excepto R1.9 y R1.8 que es opcional.
+R1.11 Para cada campo, el sistema “Habilprof” se debe rescatar los datos del alumno (Rut_Alumno, Nombre_Alumno, Correo_Alumno) desde el módulo alumnos ucsc y de los profesores (Rut_Profesor, Nombre_Profesor y Correo_Profesor) desde el módulo profesores ucsc. A excepción de Nota_Final y Fecha_Nota.
+R1.11.1 Para Nota_Final el sistema “Habilprof” debe rescatar el dato desde el módulo notas en línea ucsc, solo si existe, si no es así Nota_Final tomará valor NULL.
+R1.11.2 Para Fecha_nota, se mantendrá el valor NULL por defecto, se tomará el valor de la fecha del sistema “Habilprof” al momento de registrar Nota_final en el sistema “Notas en línea de la UCSC”.
+R1.12 Se debe verificar que los datos del alumno (Rut_Alumno, Nombre_Alumno, Correo_Alumno y Nota_Final) y de los profesores (Rut_Profesor, Nombre_Profesor y Correo_Profesor) estan registrados en el sistema “Habilprof”.
+R1.12.1 De encontrar datos de alumno o profesor no registrados en el sistema de “HabilProf” debe cargarlos y actualizarlos de forma automática según R1.11.
+R1.13 Se registra un log del sistema “Habilprof” con los datos (Rut_Alumno, Nombre_Alumno, Correo_Alumno, Nota_Final, Rut_Profesor, Nombre_Profesor y Correo_Profesor).
+R1.15 En caso de fallo de conexión con el sistema UCSC, se desplegará el mensaje: “No se ha podido establecer conexión con los sistemas UCSC”.
+R1.16 Este proceso se activará automáticamente cada minuto.
+
+Salidas: 
+Salida 1: Rut_Alumno,Nombre_Alumno,Correo_Alumno, Rut_Profesor, Nombre_Profesor, Correo_Profesor, Fecha_Ingreso, Nota_Final.
+Salida 2: Despliegue de mensajes en R1.15
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+R2. Ingreso de datos de la Habilitación Profesional
+
+Entradas: Rut_Alumno, Nombre_Alumno, Tipo_Habilitación,Título_Proyecto_Práctica, Rut_Profesor, Nombre_Profesor, Descripción_Habilitación, Profesor_Guía, Profesor_Co_Guía, Profesor_Comisión, Semestre_inicio, Rut_Supervisor, Nombre_Supervisor, Nombre_Empresa, Rut_Empresa, Profesor_Tutor, Rol_Profesor, Id_Habilitacion.
+
+Requisitos de la función:
+R1.1 El campo Rut_Alumno es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.2 El campo Nombre_Alumno es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R1.4 El campo Rut_Profesor es un número entero con rango [10000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.5 El campo Nombre_Profesor es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R2.1 El campo Tipo_Habilitación es una cadena de caracteres de largo 5, que tomará uno de los siguientes valores: {PrIng, PrInv, PrTut}.
+R2.3 El campo Descripción_Habilitacion es un dato tipo text con un mínimo de 50 caracteres y un máximo de 500 caracteres, puede incluir caracteres del abecedario, espacios (“ “), números y signos de puntuación.
+R2.4 El campo Semestre_Inicio es un dato compuesto entre año y semestre, donde:
+R2.4.1 Año es un número entero entre [2025,2050].
+R2.4.2 Semestre es un número entero entre [1,2]
+	R2.5 El campo de Id_Habilitacion es un dato compuesto derivado entre Rut_Alumno y Semestre_Inicio donde:
+		R2.5.1 El campo Rut_Alumno debe cumplir con el R1.1.
+		R2.5.2 El campo Semestre_Inicio debe cumplir con el R2.4.
+R2.6 El campo Titulo_Proyecto_Practica es un string con un mínimo de 3 caracteres y un máximo de 100 caracteres, puede incluir caracteres del abecedario, espacios    (“ “), números y signos de puntuación. 
+R2.7 El campo Profesor_Guia es un dato compuesto entre Rut_Profesor y Nombre_Profesor, donde:
+		R2.7.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.7.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+R2.8 El campo Rol_Profesor es una cadena de caracteres de largo mínimo 13 y máximo 17, que tomará los siguientes valores: {Profesor_Guia, Profesor_Comision, Profesor_Co_Guia, Profesor_Tutor}.
+R2.9 El campo Profesor_Tutor es un dato compuesto Rut_Profesor y  Nombre_Profesor.
+		R2.9.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.9.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+	R2.10 El campo Rut_Supervisor es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R2.11 El campo Nombre_Supervisor es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R2.12 El campo Rut_Empresa es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R2.13 El campo Nombre_Empresa es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R2.14 El campo Profesor_Comision es un dato compuesto Rut_Profesor y Nombre_Profesor.
+		R2.14.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.14.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+	R2.15 El campo Profesor_Co_Guia es un dato compuesto Rut_Profesor y  Nombre_Profesor.
+		R2.15.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.15.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+	R2.16 Los requisitos R1.1 al R2.5 son obligatorios para el ingreso de la habilitación profesional.
+R2.17 Los requisitos R2.6 y R2.15 son opcionales para el ingreso de la habilitación profesional.
+R2.18 Se deberán recuperar los datos (Rut_Alumno, Nombre_Alumno,Rut_Profesor, Nombre_Profesor) desde la base de datos de “HabilProf”.
+R2.19 El sistema “Habilprof” debe desplegar un listado con los datos de alumno (Rut_Alumno y Nombre_Alumno) disponibles para agregar y permitir seleccionar el alumno que se desee, luego se desplegarán las opciones de Tipo_Habilitación, como se indica R2.1 y Tipo_Habilitación tomará el valor seleccionado donde:
+		R2.19.1 El campo Rut_Alumno debe cumplir con el R1.1.
+		R2.19.2 El campo Nombre_Alumno debe cumplir con el R1.2.
+		R2.19.2 El campo Tipo_Habilitacion debe cumplir con el R2.1.
+R2.20 Para Tipo_Habilitacion con los valores “PrInv” o “PrIng” el sistema “Habilprof” deberá permitir ingresar los valores Título_Proyecto_Práctica y Descripción_Habilitación, en caso de que no cumpla las restricciones de R2.6 y R2.3, respectivamente, el sistema desplegará un mensaje: “Los datos ingresados no son válidos”.
+R2.20.1 El sistema “Habilprof” debe permitir seleccionar Profesor_Guia, Profesor_Comision, según corresponda, desde los datos previamente cargados en R1, a través de una lista desplegable con los datos de los profesores (Rut_Profesor y Nombre_Profesor), una vez seleccionado Profesor_Guia, Profesor_Comision y, de ser necesario,  Profesor_Co_Guia tomarán estos valores, según corresponda la selección del usuario.
+R2.20.1.1 Si se desea seleccionar un Profesor_Co_Guia  el sistema “Habilprof” deberá desplegar una lista con los datos de profesores (Rut_Profesor y Nombre_Profesor), según R2.20.1, esta se puede dejar sin selección (en blanco) en caso de que no se desee seleccionar un Profesor_Co_Guia.
+R2.20.2 El sistema “Habilprof” guardará la opción elegida, según R2.18.1 y le asignará el valor a Rol_Profesor, según corresponda.
+R2.20.3 Una vez asignado el rut y nombre de un profesor (Rut_Profesor, Nombre_Profesor) a un rol (Rol_Profesor) se eliminará la opción de las listas desplegables. 
+		R2.20.3.1: El campo Rut_Profesor debe cumplir con el R1.4.
+R2.20.3.2: El campo Nombre_Profesor debe cumplir con el   R1.5.
+R2.20.3.3: El campo Rol_Profesor debe cumplir con el R2.8.
+R2.20.4 Tras la verificación de los requisitos anteriores, el sistema “Habilprof” debe guardar los datos de la habilitación profesional (Id_Habilitacion,Título_Proyecto_Práctica, Descripción_Habilitación, Profesor_Guia, Profesor_Comision y, de haberse ingresado, Profesor_Co_Guia) en la base de datos de “Habilprof”.
+
+R2.21 Para Tipo_Habilitacion con el valor “PrTut” el sistema “Habilprof” deberá permitir ingresar manualmente los valores de Descripcion_Habilitacion, Rut_Supervisor, Nombre_Supervisor, Rut_Empresa, Nombre_Empresa en caso de que no cumpla las restricciones de R2.3, R2.10, R2.11, R2.12, R2.13, el sistema desplegará un mensaje: “Los datos ingresados no son válidos”.
+R2.21.1 El sistema debe permitir seleccionar Profesor_Tutor a través de una lista desplegable desde los datos previamente cargados en R1 (Rut_Profesor y Nombre_Profesor), una vez seleccionado Profesor_Tutor tomará estos valores.
+R2.21.2 El sistema “HabilProf” guardará la opción elegida, según R2.21.1, y le asignará el valor a Rol_Profesor, respectivamente en la base de datos del sistema “HabilProf”.
+R2.21.3 Una vez asignado el rut y nombre de un profesor (Rut_Profesor, Nombre_Profesor) a un rol (Rol_Profesor) se eliminará la opción de seleccionar a este profesor de las listas desplegables. 
+R2.21.4 El sistema “Habilprof” deberá almacenar los datos (Rut_Empresa, Nombre_Empresa, Rut_Supervisor y Nombre_Supervisor) en la base de datos de “Habilprof”.
+R2.21.5 Tras la verificación de los requisitos anteriores, el sistema “Habilprof” debe guardar los datos de la habilitación profesional (Id_Habilitacion, Descripción_Habilitación, Profesor_Tutor, Rut_Empresa, Nombre_Empresa, Rut_Supervisor y Nombre_Supervisor).
+
+	R2.22 Para Semestre_Inicio se validaran las siguientes opciones:
+Si el mes de inicio de práctica es entre enero y julio corresponde a '1'.
+Si el mes de inicio de práctica es entre agosto y diciembre corresponde a '2'.
+El año de inicio de la práctica tomará el valor del año actual según reloj del sistema “Habilprof”.
+	R2.22.1 Una vez validado el sistema “Habilprof” deberá asignar este valor y guardarlo en la base de datos de este sistema.
+R2.23 Una vez seleccionado los campos Rut_Alumno, Tipo habilitación, Profesor_Guía, Profesor_Comisión e ingresar los campos Rut_Supervisor, Nombre_Supervisor, Nombre_Empresa, Rut_Empresa, Título_proyecto_práctica y Descripción habilitación, el sistema “Habilprof” realizará una verificación según se especifica desde R2.23.1 hasta R2.23.10.
+R2.23.1 Si no se selecciona un valor para el campo Rut_Alumno, se desplegará el mensaje “El campo Rut_Alumno es obligatorio”.
+R2.23.2 Si no se selecciona un valor para el campo Tipo_Habilitacion, se desplegará el mensaje “El campo Tipo_Habilitacion es obligatorio”.
+R2.23.3 Si no se selecciona un valor para el campo Profesor_Guía, se desplegará el mensaje “El campo Profesor_Guía es obligatorio”.
+R2.23.4 Si no se selecciona un valor para el campo Profesor_Comision, se desplegará el mensaje “El campo Profesor_Comision es obligatorio”.
+R2.23.5 Si se intentase ingresar un valor para el campo Rut_Supervisor que no cumpla las restricciones de R2.10, se desplegará el mensaje “El Rut de supervisor no es válido”.
+R2.23.6 Si se intentase ingresar un valor para el campo Nombre_Supervisor que no cumpla las restricciones de R2.11, se desplegará el mensaje “El Nombre del supervisor no es válido”.
+R2.23.7 Si se intentase ingresar un valor para el campo Rut_Empresa que no cumpla las restricciones de R2.12, se desplegará el mensaje “El Rut de la empresa no es válido”.
+R2.23.8 Si se intentase ingresar un valor para el campo Nombre_Empresa que no cumpla las restricciones de R2.13, se desplegará el mensaje “El Nombre de la empresa no es válido”.
+R2.23.9 Si se intentase ingresar un valor para el campo Título_Proyecto_Práctica que no cumpla las restricciones de R2.6, se desplegará el mensaje “Título de proyecto no válido”.
+R2.23.10 Si se intentase ingresar un valor para el campo Descripcion_Habilitacion que no cumpla las restricciones de R2.3, se desplegará el mensaje “Descripción no válida”.
+R2.24 El sistema de “Habilprof” debe generar ID_Habilitacion a partir de los datos Rut_Alumno y Semestre_Inicio, como se indica en R2.5, y asignarla a la habilitación profesional.
+R2.25 El sistema debe rescatar y mostrar la Nota_Final y Fecha_Nota solo si es que está disponible, si no es así, el sistema desplegará un mensaje: “Nota Final no disponible”.
+	R2.26 Una vez verificado los requisitos anteriores, el sistema “Habilprof” ingresara
+	exitosamente el registro y desplegará el mensaje “Se ha ingresado correctamente la Habilitacion Profesional”, de igual manera se desplegará un registro con los siguientes campos según Tipo_Habilitacion:
+R2.26.1 Para Tipo_Habilitacion con los valores “PrIng” y “PrInv” se desplegará el registro con los siguientes datos de la habilitación profesional:
+Rut_Alumno
+Nombre_Alumno
+Titulo_Proyecto_Practica
+Descripcion_Habilitacion
+Profesor_Comision
+Profesor_Guia
+De ser necesario, Profesor_Co_Guia
+Id_Habilitacion
+Nota_Final (si es que existe, según R.25)
+Fecha_Nota (si es que existe, según R.25)
+	R2.26.2 Para Tipo_Habilitacion con los valores “PrTut” se desplegará el registro con los siguientes datos de la habilitación profesional:
+Rut_Alumno
+Nombre_Alumno
+Descripcion_Habilitacion
+Profesor_Tutor
+Rut_Supervisor
+Nombre_Supervisor
+Rut_Empresa
+Nombre_Empresa
+Id_Habilitacion
+Nota_Final (si es que existe, según R.25)
+Fecha_Nota (si es que existe, según R.25)
+
+Salidas
+Salida 1: Rut_Alumno, Nombre_Alumno, Tipo_Habilitación,Título_Proyecto_Práctica, Rut_Profesor, Nombre_Profesor, Descripción_Habilitación, Profesor_Guía, Profesor_Co_Guía, Profesor_Comisión, Semestre_inicio, Rut_Supervisor, Nombre_Supervisor, Nombre_Empresa, Rut_Empresa, Profesor_Tutor, Rol_Profesor, Id_Habilitacion.
+Salida 2: Despliegue de mensajes R2.19, R2.23.1, R2.23.2, R2.23.3, R2.23.4, R2.23.5, R2.23.6, R2.23.7, R2.23.8, R2.23.9 y R2.23.10, R2.25, R2.26, R2.26.1, R2.26.2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+R3. Eliminación de habilitación y Actualización de datos
+Entradas: Id_Habilitación, Rut_Alumno, Nombre_Alumno, Tipo_Habilitacion, Titulo_Proyecto_Practica, Descripcion_Habilitacion, Nombre_Profesor, Rut_Profesor, Profesor_Co_Guia, Profesor_Guia, Profesor_Comision, Semestre_Inicio, Nota_Final, Rut_supervisor, Nombre_Supervisor, Rut_Empresa, Nombre_Empresa,  Profesor_tutor, Rol_profesor
+
+Requisitos de la función:
+	R1.1 El campo Rut_Alumno es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.2 El campo Nombre_Alumno es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R1.4 El campo Rut_Profesor es un número entero con rango [10000000, 60000000], El tamaño mínimo y máximo para este campo es de 1 y 8, respectivamente.
+	R1.5 El campo Nombre_Profesor es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R1.8 El campo Nota_Final es un dato tipo Float de tamaño 3, entre [1.00, 7.00] (Ejemplo: 6.56, 7.00, 3.43), este dato puede ser nulo.
+R1.9 El campo Fecha_nota es un dato tipo Date de tamaño 10, con un formato de DD/MM/AAAA, donde DD, MM y AAAA son entero de [01,31], [01,12], [2025, 2050], respectivamente.
+R2.1 El campo Tipo_Habilitación es una cadena de caracteres de largo 5, que tomará uno de los siguientes valores: {PrIng, PrInv, PrTut}.
+R2.3 El campo Descripción_Habilitacion es un dato tipo text con un mínimo de 50 caracteres y un máximo de 500 caracteres, puede incluir caracteres del abecedario, espacios (“ “), números y signos de puntuación.
+R2.4 El campo Semestre_Inicio es un dato compuesto entre año y semestre, donde:
+R2.4.1 Año es un número entero entre [2025,2050].
+R2.4.2 Semestre es un número entero entre [1,2].
+	R2.5 El campo de Id_Habilitacion es un dato compuesto derivado entre Rut_Alumno y Semestre_Inicio donde:
+		R2.5.1 El campo Rut_Alumno debe cumplir con el R1.1.
+		R2.5.2 El campo Semestre_Inicio debe cumplir con el R2.4.
+R2.6 El campo Titulo_Proyecto_Practica es un string con un mínimo de 3 caracteres y un máximo de 100 caracteres, puede incluir caracteres del abecedario, espacios    (“ “), números y signos de puntuación. 
+R2.7 El campo Profesor_Guia es un dato compuesto entre Rut_Profesor y Nombre_Profesor, donde:
+		R2.7.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.7.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+R2.8 El campo Rol_Profesor es una cadena de caracteres de largo mínimo 13 y máximo 17, que tomará los siguientes valores: {Profesor_Guia, Profesor_Comision, Profesor_Co_Guia, Profesor_Tutor}.
+R2.9 El campo Profesor_Tutor es un dato compuesto Rut_Profesor y  Nombre_Profesor.
+		R2.9.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.9.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+	R2.10 El campo Rut_Supervisor es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R2.11 El campo Nombre_Supervisor es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R2.12 El campo Rut_Empresa es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R2.13 El campo Nombre_Empresa es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R2.14 El campo Profesor_Comision es un dato compuesto Rut_Profesor y Nombre_Profesor.
+		R2.14.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.14.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+R2.15 El campo Profesor_Co_Guia es un dato compuesto Rut_Profesor y  Nombre_Profesor.
+		R2.15.1 El campo Rut_Profesor debe cumplir con el R1.4.
+		R2.15.2 El campo Nombre_Profesor debe cumplir con el R1.5.
+R3.1 Los requisitos R1.1, R1.2, R1.4, R1.5, R2.1, R2.3, R2.5 y R2.8 son obligatorios para la actualización o eliminación de la habilitación profesional.
+R3.2 Los requisitos R1.9, R1.10, R2.6, R2.7, R2.8, R2.9, R2.10, R2.11, R2.12, R2.13, R2.14 y R2.15 son opcionales para la actualización o eliminación de la habilitación profesional.
+R3.3 El sistema “Habilprof” deberá ingresar una Id_Habilitacion (asociada a un Rut_Alumno como se indica en R2.5), (Ejemplo: 12345678_2025-1) de lo contrario el sistema desplegará un mensaje “La habilitación profesional no existe, por favor vuelva a intentarlo” y volverá a pedirle el Id_Habilitacion. 
+R3.4 El usuario debe seleccionar si necesita “Modificar/Actualizar” o “Eliminar”.
+R3.4.1 En caso de que el usuario seleccione la opción “Eliminar”, se le pedirá confirmación al usuario antes de realizar la operación de eliminación, este consultará entre dos opciones; “Seguro que desea eliminar esta habilitación profesional” o “Cancelar Operación”.
+R3.4.1.1 De escoger la opción “Seguro que desea eliminar esta habilitación profesional”, El sistema deberá eliminar todos los datos que dependan de Id_Habilitacion, incluyendo a este, y desplegará un mensaje “Habilitación Borrada con éxito”.
+R3.4.1.2 De escoger la opción “Cancelar Operación”, Deberá volver a verificar el requisito R3.4.
+R3.4.2 En caso de que el usuario seleccione la opción “Modificar/Actualizar”,  el sistema “Habilprof” desplegará los datos que se pueden modificar según valor de Tipo_Habilitacion.
+R3.4.2.1 Para Tipo_Habilitacion con los valores “PrIng” o “PrInv”, los datos que desplegará el sistema son: 
+
+Titulo_Proyecto_Practica (Según R2.6).
+Descripcion_Habilitacion (Según R2.3).
+Profesor_Guia (Según R2.7).
+Profesor_Co_Guia (Si es que tiene uno ingresado) (Según R2.15).
+Profesor_Comision (Según R2.14).
+Semestre_Inicio (Según R2.5).
+Nota_Final (Si es que está disponible) (Según R1.8).
+Fecha_Nota (Si es que está disponible) (Según R1.9).
+R3.4.2.2 Para Tipo_Habilitacion con valor “PrTut”, los datos que desplegará son:
+Nombre_Empresa (Según R2.13).
+Rut_Empresa (Según R2.12).
+Nombre_Supervisor (Según R2.11).
+Rut_Supervisor (Según R2.10).
+Profesor_Tutor (Según R2.9).
+Descripcion_Habilitacion (Según R2.3).
+Semestre_Inicio (Según R2.5).
+Nota_Final (Si es que está disponible) (Según R1.8).
+Fecha_Nota (Si es que está disponible) (Según R1.9).
+R3.4.2.3 Una vez desplegado los datos según R3.5.2.1 o R3.5.2.2 el sistema permitirá editar estos campos.
+R3.4.2.3.1 Para Profesor_Guia, Profesor_Co_Guia, Profesor_Comision y Profesor_Tutor el sistema deberá desplegar para cada uno de los campos (según R3.5.2) el listado de los profesores cargados previamente en R1.
+R3.4.2.3.2 Para el resto de los campos Rut_Empresa, Nombre_Empresa, Rut_Supervisor, Nombre_Supervisor, Descripcion_Habilitacion, Titulo_Proyecto_Practica, Semestre_Inicio, Nota_Final, segun sus restricciones según R2.12, R2.13, R2.10, R2.11, R2.6, R2.3, R2.5 y R1.9 respectivamente, el sistema deberá permitir al usuario editarlos manualmente.
+R3.4.2.3.3 El sistema “Habilprof” debe permitir seleccionar “Terminar Modificación”, si este se selecciona, la modificación terminará y se pasará al R3.5.2.4.
+R3.4.2.4 Tras verificar el requisito anterior el sistema “Habilprof” deberá actualizar los datos modificados y guardar los cambios en la base de datos del sistema, y desplegará un mensaje “Datos actualizados con éxito”.
+R3.5 Una vez verificados los requisitos R3.4 y R3.5 (considerando sus sub requisitos) y es exitosa una modificación/actualización o eliminación, el sistema deberá salir de la funcionalidad.
+
+Salidas 
+Salida 1: Id_Habilitación, Rut_Alumno, Nombre_Alumno, Tipo_Habilitacion, Titulo_Proyecto_Practica, Descripcion_Habilitacion, Nombre_Profesor, Rut_Profesor, Profesor_Co_Guia, Profesor_Guia, Profesor_Comision, Semestre_Inicio, Nota_Final, Rut_supervisor, Nombre_Supervisor, Rut_Empresa, Nombre_Empresa,  Profesor_tutor, Rol_profesor
+
+Salida 2: Despliegue de mensajes R3.3, R3.4.1, R3.4.1.1, R3.4.2.1, R3.4.2.2, R3.4.2.4
+R4. Generar listado semestral e histórico
+Entradas: Semestre_inicio, Rol_Profesor, Profesor_Guia, Profesor_Co_Guia, Profesor_Comision, Rut_Alumno, Nombre_Alumno, Tipo_Habilitación, Título_Proyecto_Práctica, Rut_Profesor, Nombre_Profesor, Descripción_Habilitación, Profesor_Guía, Profesor_Co_Guía, Profesor_Comisión, Semestre_inicio, Nota_Final, Rut_Empresa, Nombre_Empresa, Profesor_Tutor.
+
+Requisitos de la función:
+
+R1.1 El campo Rut_Alumno es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.2 El campo Nombre_Alumno es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R1.4 El campo Rut_Profesor es un número entero con rango [10000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.5 El campo Nombre_Profesor es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R2.1 El campo Tipo_Habilitación es una cadena de caracteres de largo 5, que tomará uno de los siguientes valores:
+ {PrIng, PrInv, PrTut}.
+R2.2 El campo Título_Proyecto_Práctica es un string con un mínimo de 3 caracteres y un máximo de 100 caracteres, puede incluir caracteres del abecedario, espacios (“ ”), números y signos de puntuación.
+R2.3 El campo Descripción_Habilitación es un dato tipo text con un mínimo de 50 caracteres y un máximo de 500 caracteres, puede incluir caracteres del abecedario, espacios (“ ”), números y signos de puntuación.
+R2.4 El campo Profesor_Guia es un dato compuesto entre Rut_Profesor y Nombre_Profesor, donde:
+R2.4.1 El campo Rut_Profesor debe cumplir con R1.4.
+R2.4.2 El campo Nombre_Profesor debe cumplir con R1.5.
+R2.5 El campo Semestre_Inicio es un dato compuesto entre año y semestre, donde:
+Año es un número entero entre [2025,2050].
+Semestre es un número entero entre [1,2].
+R2.6 El campo Profesor_Comision es un dato compuesto entre Rut_Profesor y Nombre_Profesor, donde:
+R2.6.1 El campo Rut_Profesor debe cumplir con R1.4.
+R2.6.2 El campo Nombre_Profesor debe cumplir con R1.5.
+R2.7 El campo Profesor_Co_Guia es un dato compuesto entre Rut_Profesor y Nombre_Profesor, donde:
+R2.7.1 El campo Rut_Profesor debe cumplir con R1.4.
+R2.7.2 El campo Nombre_Profesor debe cumplir con R1.5.
+	R4.1 Los requisitos anteriores son obligatorios para el listado semestral e historico
+R4.2 Para consultar el listado semestral es necesario ingresar el dato Semestre_inicio.
+R4.3 Para consultar el listado histórico es necesario ingresar los datos Rut_Profesor y Semestre_inicio.
+R4.3.1 El campo Rut_Profesor debe cumplir con la restricción R1.4.
+R4.3.2 El campo Semestre_inicio debe cumplir con la restricción R2.5.
+R4.4 El campo Semestre_Inicio y el campo Rut_Profesor son obligatorios.
+R4.5 Si se intenta ingresar un valor en Semestre_Inicio que no cumpla con R2.5, se desplegará el mensaje: “El valor de Semestre_Inicio no es válido”.
+R4.6 Si se intenta ingresar un valor en Rut_Profesor que no cumpla con R1.4, se desplegará el mensaje: “El valor de Rut_Profesor no es válido”.
+R4.7 Si se ingresa un valor de Rut_Profesor que no se encuentre registrado en el sistema “Habilprof”, se desplegará el mensaje: “El valor de Rut_Profesor no se encuentra registrado en el sistema ‘Habilprof’”.
+R4.8 El usuario podrá seleccionar entre dos pestañas que serán nombradas:
+“Listado semestral”.
+“Listado histórico”.
+R4.9 Al ingresar correctamente el Semestre_inicio en la pestaña “Listado semestral”, se obtendrán los datos del sistema y se desplegará una ventana con los datos de los alumnos que están haciendo la práctica.
+R4.9.1 En caso de que el Tipo_Habilitación sea PrInv o PrIng, se mostrará en la ventana los datos asociados al alumno como:
+ Rut_Alumno, Nombre_Alumno, Profesor_Guia, Profesor_Co_Guia (en caso de tener), Profesor_Comision, Tipo_Habilitación, Descripción_Habilitación, Título_Proyecto_Práctica y Nota_Final.
+R4.9.2 En caso de que el Tipo_Habilitación sea PrTut, se mostrará en ventana los datos asociados al alumno como:
+ Rut_Alumno, Nombre_Alumno, Nombre_Supervisor, Rut_Supervisor, Profesor_Tutor, Nombre_Empresa, Rut_Empresa, Descripción_Habilitación y Nota_Final.
+R4.10 Al ingresar correctamente los datos Semestre_inicio y Rut_Profesor en la pestaña “Listado histórico”, se obtendrán los datos del sistema habilprof y se desplegará una ventana con los datos de los alumnos que están realizando la práctica asociados a ese Rut_Profesor y Semestre_Inicio.
+
+Salidas:
+
+Salida 1: Semestre_inicio, Profesor_Guia, Profesor_Co_Guia, Profesor_Comision, Rut_Alumno, Nombre_Alumno, Tipo_Habilitación, Título_Proyecto_Práctica, Rut_Profesor, Nombre_Profesor, Descripción_Habilitación, Profesor_Guía, Profesor_Co_Guía, Profesor_Comisión, Semestre_inicio, Nota_Final, Rut_Empresa, Nombre_Empresa, Profesor_Tutor.
+ 
+Salida 2: Despliegue de mensajes R4.4, R4.5, R4.6
+
+Salida 3: Despliegue de pestañas con Listado semestral R4.8 y Listado histórico R4.9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+R5. Autentificar Usuario (Login)
+
+Entradas: Rut_Admin, Contraseña
+Requisitos de la función: 
+	
+R5.1 El campo Rut_Admin es un número entero con rango [10000000, 60000000], El tamaño mínimo y máximo para este campo es de 1 y 8, respectivamente.
+R5.2 El campo Contraseña es un string de máximo de 30 caracteres y un mínimo de 8 caracteres, los cuales estarán compuestos por caracteres del abecedario [a-z, A-Z], números enteros y caracteres especiales.
+R5.2.1 El campo contraseña se mantendrá oculto mediante una visualización de caracteres asteriscos(*).
+	R5.3 Los requisitos anteriores son obligatorios para loguearse en la página.
+R5.4 La validación de campos de entrada es obligatoria.
+R5.4.1 Si se intentase iniciar sesión con el campo Rut_Admin vacío, erróneo o que no se encuentre en la base de datos de “Habilprof” se desplegará el mensaje de “El rut ingresado es incorrecto”.
+R5.4.2 Si se intentase iniciar sesión con el campo Contraseña vacío, erróneo o que no se encuentre en la base de datos de “Habilprof” se desplegará el mensaje de “La contraseña ingresada es incorrecta”.
+R5.5 Al intentar iniciar sesión, el sistema debe validar que el Rut_Admin ingresado cumpla con la restricción R5.1, si no la cumple, se desplegará el mensaje: “El formato del RUT no es válido”.
+R5.6  El sistema “Habilprof” debe verificar los datos (Rut_Admin y Contraseña) contra los registros almacenados en la base de datos de "HabilProf".
+R5.7 Una vez verificados los requisitos anteriores el sistema de “Habilprof” deberá:
+	R5.7.1 El sistema debe crear una sesión de usuario.
+R5.7.2 El sistema debe redirigir al usuario al panel principal del sistema con las respectivas funcionalidades(R.2, R.3 Y R.4).
+R5.7.3 Si se ingresa correctamente la sesión respecto R5.7.1, el sistema debe desplegará el mensaje: “Inicio de sesión exitoso”.
+R5.8 El sistema debe proveer una funcionalidad (enlace o botón) de "Cerrar Sesión" para usuarios autenticados.
+R5.8.1 Al ejecutar esta acción, el sistema debe invalidar la sesión del usuario (como se indica en R5.6.1) y redirigirlo a la pantalla de Login.
+
+	Salidas:
+	Salidas 1: Rut_Profesor, Contraseña , Correo_Profesor
+	Salidas 2: Despliegue de mensajes R5.4.1, R5.4.2, R5.5, R5.7.3
+
+
+
+
+R6. Módulos Fantasmas de Sistema UCSC: Simulación de conectividad entre sistemas externos (Nomina Alumnos, Nomina Profesores y Notas en línea) con el sistema habilprof.
+Entradas: Rut_Profesor, Nombre_Profesor, Correo_Profesor, Nota_Final, Fecha_Nota, Rut_Alumno, Nombre_Alumno, Correo_Alumno
+Requisitos:
+R1.1 El campo Rut_Alumno es un número entero con rango [1000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.2 El campo Nombre_Alumno es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+
+R1.3 El campo Correo_Alumno debe aceptar caracteres alfanuméricos (Incluyendo “@” y “.”) de una longitud entre [1,255].
+R1.4 El campo Rut_Profesor es un número entero con rango [10000000, 60000000], El tamaño mínimo y máximo para este campo es de 7 y 8, respectivamente.
+R1.5 El campo Nombre_Profesor es un string con un máximo de 100 caracteres, compuesto de caracteres del abecedario (a-z , A-Z), incluyendo tildes.
+R1.6 El campo Correo_Profesor debe aceptar caracteres alfanuméricos (Incluyendo “@” y “.”) de una longitud entre [7,255].
+R1.8 El campo Nota_Final es un dato tipo Float de tamaño 3, entre [1.00, 7.00] (Ejemplo: 6.56, 7.00, 3.43), este dato puede ser nulo.
+R1.9 El campo Fecha_nota es un dato tipo Date de tamaño 10, con un formato de DD/MM/AAAA, donde DD, MM y AAAA son entero de [01,31], [01,12], [2025, 2050], respectivamente.
+R6.1 Los requisitos de R1.1 hasta R1.9 son obligatorios para simular el rescate de los datos desde los sistemas UCSC (módulos fantasmas) hacia los sistemas de habilprof.
+R6.2  El módulo fantasma deberá simular los sistemas externos de la UCSC (Nómina de alumnos, Nómina de profesores, Notas en línea) para rescatar los datos que se desea el sistema de habilprof (Rut_Profesor, Nombre_Profesor, Correo_Profesor, Nota_Final, Fecha_Nota, Rut_Alumno, Nombre_Alumno, Correo_Alumno) según R.1.
+R6.3 La base de datos del sistema habilprof debe tener una conexión directa con la base de datos de los sistemas de la UCSC (módulos fantasmas), la cual contiene 3 tablas que representan los tres sistemas mencionados previamente en R6.2 (Nómina de alumnos, Nómina de profesores, Notas en línea) para que funcione correctamente el R.1.
+R6.4 El módulo fantasma estará correctamente implementado una vez este simule y tenga una conexión directa con el sistema habilprof, se deben cumplir los requisitos de R6.1 a R6.3.
