@@ -8,8 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use App\Models\AutentificacionDeUsuario;
+use App\Models\Profesor;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Mail\PasswordResetCode;
+
 
 class LoginProfesorController extends Controller
 {
@@ -36,8 +43,6 @@ class LoginProfesorController extends Controller
         }
 
         // 3. Validar el formato de los campos (R5.3, R1.4, R5.1)
-        // (La validación de 'rut_admin' es correcta, de 7 a 9 dígitos)
-        // Normalizamos los datos para validación (usamos 'rut_admin' como campo canónico)
         $dataToValidate = [
             'rut_admin' => $rut,
             'password' => $request->input('password'),
@@ -59,8 +64,7 @@ class LoginProfesorController extends Controller
         }
 
         // 4. Validar existencia del RUT (R5.2.1)
-        // Usamos find() porque 'rut_admin' es la Primary Key.
-    $authData = AutentificacionDeUsuario::find($rut);
+        $authData = AutentificacionDeUsuario::find($rut);
 
         if (!$authData) {
             RateLimiter::hit($throttleKey, 15 * 60);
@@ -68,11 +72,6 @@ class LoginProfesorController extends Controller
         }
 
         // 5. Intentar autenticación (R5.4)
-
-        // Laravel usará el 'password' del formulario y lo comparará con
-        // la columna 'contraseña' de la BD, gracias a la función
-        // getAuthPasswordName() que definimos en el modelo.
-        // Construir credenciales usando la columna PK del modelo
         $idName = (new AutentificacionDeUsuario())->getKeyName();
         $credentials = [
             $idName => $rut,
@@ -88,18 +87,12 @@ class LoginProfesorController extends Controller
         RateLimiter::clear($throttleKey);
         $request->session()->regenerate(); // R5.5.1: Crear sesión
 
-
-        // Obtenemos el usuario logueado (que es un modelo 'AutentificacionDeUsuario')
         $authUser = Auth::guard('profesor')->user();
-        
-        // Por ahora devolvemos un objeto simple con los datos del admin
-        // (La tabla autentificacion_de_usuario solo tiene rut_admin, no nombre)
         $userData = [
             'rut_admin' => $authUser->rut_admin,
             'nombre_profesor' => 'Administrador', // Placeholder hasta tener relación con profesor
         ];
 
-        // Devolvemos los datos del usuario y el mensaje de éxito
         return response()->json([
             'message' => 'Inicio de sesión exitoso', // R5.5.3
             'profesor' => $userData
@@ -107,16 +100,143 @@ class LoginProfesorController extends Controller
     }
 
     /**
+     * ✅ Paso 1: Generar código de seguridad y enviarlo por correo.
+     * Ruta: POST /api/forgot-password
+     */
+    public function sendPasswordResetLink(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'rut_profesor' => 'required|integer|min:1000000|max:999999999',
+            'email' => 'required|email',
+        ], [
+            'rut_profesor.required' => 'El campo RUT es obligatorio.',
+            'email.required' => 'El campo Correo Electrónico es obligatorio.',
+            'email.email' => 'El Correo Electrónico debe ser una dirección válida.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $rut = $request->rut_profesor;
+        $email = $request->email;
+
+        // 1. Verificar RUT y CORREO en la tabla AutentificacionDeUsuario (usando la columna 'correo')
+        $userAuth = AutentificacionDeUsuario::where('rut_admin', $rut)
+                            ->where('correo', $email)
+                            ->first();
+
+        if (!$userAuth) {
+            // Mensaje genérico por seguridad
+            return response()->json(['message' => 'Los datos ingresados no coinciden con nuestros registros.'], 422);
+        }
+
+        // 2. Obtener el nombre del profesor (si existe) para el correo.
+        // NOTA: Usando 'rut_admin' para buscar en 'profesor'
+
+        $userName = 'Estimado Usuario';
+
+        // 3. Generar código (6 dígitos) y guardar hasheado en DB
+        $plainToken = Str::padLeft(rand(1, 999999), 6, '0');
+        $hashedToken = Hash::make($plainToken);
+
+        // Guardar/Actualizar token en la tabla password_reset_tokens
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['rut_admin' => $rut],
+            ['token' => $hashedToken, 'created_at' => now()]
+        );
+
+        // 4. Enviar el correo electrónico
+        try {
+            Mail::to($email)->send(new PasswordResetCode($plainToken, $userName));
+
+        } catch (\Exception $e) {
+            // Uso de la Facade Log importada:
+            Log::error('Error enviando correo de reseteo: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error al intentar enviar el código de seguridad. Intente nuevamente.'
+            ], 500);
+        }
+
+        // 5. Respuesta de Éxito
+        return response()->json([
+            'rut' => $rut,
+            'message' => 'Si los datos son correctos, el código de seguridad ha sido enviado al correo registrado. Por favor, revise su bandeja de entrada (incluyendo SPAM).'
+        ], 200);
+    }
+
+    /**
+     * ✅ Paso 2: Verificar código y cambiar contraseña.
+     * Ruta: POST /api/reset-password
+     */
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'rut_profesor' => 'required|integer|min:1000000|max:999999999',
+            'code' => 'required|string|size:6',
+            'password' => 'required|string|min:8|max:30|confirmed',
+        ], [
+            'code.required' => 'Debe ingresar el código de seguridad.',
+            'code.size' => 'El código de seguridad debe tener 6 dígitos.',
+            'password.required' => 'El campo nueva contraseña es obligatorio.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $rut = $request->rut_profesor;
+        $code = $request->code;
+        $newPassword = $request->password;
+
+        // 1. Buscar token y verificar expiración (60 minutos)
+        $tokenData = DB::table('password_reset_tokens')
+                    ->where('rut_admin', $rut)
+                    ->first();
+
+        if (!$tokenData || now()->subMinutes(60)->greaterThan($tokenData->created_at)) {
+            if ($tokenData) {
+                DB::table('password_reset_tokens')->where('rut_admin', $rut)->delete();
+            }
+            return response()->json([
+                'message' => 'El código de seguridad es inválido o ha expirado. Por favor, solicite uno nuevo.'
+            ], 422);
+        }
+
+        // 2. Verificar código
+        if (!Hash::check($code, $tokenData->token)) {
+            return response()->json(['message' => 'El código de seguridad ingresado es incorrecto.'], 422);
+        }
+
+        // 3. Actualizar la contraseña en AutentificacionDeUsuario
+        $user = AutentificacionDeUsuario::find($rut);
+        if (!$user) {
+            return response()->json(['message' => 'Error de usuario. Intente solicitar un nuevo código.'], 422);
+        }
+
+        // Usamos la columna 'contraseña' de tu tabla
+        $user->contraseña = Hash::make($newPassword);
+        $user->save();
+
+        // 4. Eliminar el token
+        DB::table('password_reset_tokens')->where('rut_admin', $rut)->delete();
+
+        // 5. Éxito
+        return response()->json([
+            'message' => 'Contraseña restablecida exitosamente. Ahora puede iniciar sesión con su nueva contraseña.'
+        ], 200);
+    }
+
+    /**
      * Cierra la sesión del usuario (R5.8).
-     * Compatible con sistema original (AuthController) y nuevo sistema (React).
      */
     public function destroy(Request $request)
     {
-        // Logout del guard 'profesor' (sistema nuevo React)
         Auth::guard('profesor')->logout();
 
-        // Limpiar sesión completa (compatible con sistema original)
-        $request->session()->invalidate(); // R5.8.1
+        $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return response()->json(['message' => 'Sesión cerrada exitosamente.'], 200);
@@ -127,14 +247,12 @@ class LoginProfesorController extends Controller
      */
     public function user(Request $request)
     {
-        // Obtenemos el modelo de Autenticación
         $authData = $request->user('profesor');
 
         if (!$authData) {
             return response()->json(null, 401);
         }
 
-        // Devolvemos un objeto simple con los datos del admin
         return response()->json([
             'rut_admin' => $authData->rut_admin,
             'nombre_profesor' => 'Administrador', // Placeholder
@@ -147,27 +265,22 @@ class LoginProfesorController extends Controller
 
     /**
      * Mostrar formulario de login (compatible con rutas web originales)
-     * Retorna la SPA React que incluye el componente Login
      */
     public function showLogin()
     {
-        // Si ya está autenticado con el guard 'profesor', redirigir al dashboard
         if (Auth::guard('profesor')->check()) {
             return redirect('/dashboard');
         }
-        
-        // Si hay sesión manual del sistema original
+
         if (Session::has('user_authenticated')) {
             return redirect('/dashboard');
         }
-        
-        // Retornar la vista welcome.blade.php que contiene la SPA React con Login
+
         return view('welcome');
     }
 
     /**
      * Procesar login (versión web/blade compatible con sistema original)
-     * Alternativa al método store() para rutas web tradicionales
      */
     public function loginWeb(Request $request)
     {
@@ -180,21 +293,18 @@ class LoginProfesorController extends Controller
         $password = $request->input('password');
 
         try {
-            // Intentar login con guard 'profesor' usando rut_admin
-            // Asumiendo que username puede ser el RUT
             $credentials = [
                 'rut_admin' => $username,
                 'password' => $password
             ];
 
-            if (Auth::guard('profesor')->attempt($credentials, false)) { // remember = false
+            if (Auth::guard('profesor')->attempt($credentials, false)) {
                 $request->session()->regenerate();
-                
-                // Compatibilidad: Guardar también en sesión manual
+
                 $authUser = Auth::guard('profesor')->user();
                 Session::put('user_authenticated', true);
                 Session::put('user_id', $authUser->rut_admin);
-                Session::put('username', 'admin'); // Placeholder
+                Session::put('username', 'admin');
 
                 return redirect('/dashboard');
             } else {

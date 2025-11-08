@@ -10,17 +10,10 @@ use App\Http\Controllers\RegisterProfesorController;
 |--------------------------------------------------------------------------
 | Rutas API
 |--------------------------------------------------------------------------
-|
-| Aquí vamos a añadir manualmente el middleware de "sesión"
-| para que tu LoginProfesorController (que usa sesiones) funcione.
-|
 */
 
 // --- RUTAS DE AUTENTICACIÓN (de tu amigo) ---
-// Añadimos el middleware de sesión ('web') a todas nuestras rutas.
-// Esto soluciona el Error 500.
 Route::middleware([
-    // Esto es (básicamente) el grupo 'web', pero sin el CSRF (que da el Error 419)
     \Illuminate\Cookie\Middleware\EncryptCookies::class,
     \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
     \Illuminate\Session\Middleware\StartSession::class,
@@ -29,6 +22,12 @@ Route::middleware([
 
     // Ruta de Login: /api/login
     Route::post('/login', [LoginProfesorController::class, 'store'])->name('login');
+
+    // ✅ NUEVA RUTA: Olvidé Contraseña (Paso 1: Solicitud de código)
+    Route::post('/forgot-password', [LoginProfesorController::class, 'sendPasswordResetLink']);
+
+    // ✅ NUEVA RUTA: Restablecer Contraseña (Paso 2: Uso del código)
+    Route::post('/reset-password', [LoginProfesorController::class, 'resetPassword']); // <-- ¡AGREGADA!
 
     // Rutas que requieren estar logueado (auth:profesor)
     Route::middleware('auth:profesor')->group(function () {
