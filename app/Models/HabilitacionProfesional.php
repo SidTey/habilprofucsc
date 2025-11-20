@@ -9,8 +9,8 @@ class HabilitacionProfesional extends Model
     public $timestamps = false;
     protected $table = 'habilitacion_profesional';
     protected $primaryKey = 'id_habilitacion';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing = true;
+    protected $keyType = 'integer';
 
     protected $fillable = [
         'rut_alumno',
