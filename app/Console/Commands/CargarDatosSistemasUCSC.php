@@ -37,7 +37,7 @@ class CargarDatosSistemasUCSC extends Command
         try {
             DB::connection('db_fantasma')->getPdo();
         } catch (\Exception $e) {
-            file_put_contents($logPath, "[" . now() . "] ERROR: Fallo de conexión con db_fantasma\n", FILE_APPEND);
+            file_put_contents($logPath, "[" . now() . "] No se ha podido establecer conexión con los sistemas UCSC\n", FILE_APPEND);
             return 1;
         }
 
@@ -51,8 +51,8 @@ class CargarDatosSistemasUCSC extends Command
             $validator = Validator::make($prof->toArray(), [
                 'rut_profesor' => ['required', 'integer', 'between:1000000,60000000'],
                 'nombre_profesor' => ['required', 'string', 'max:100', 'regex:/^[\pL\s\-]+$/u'],
-                //'correo_profesor' => ['required', 'email:rfc,dns', 'max:255'], // SIN RESTRICCION
-                'correo_profesor' => ['required', 'email:rfc,dns', 'max:255', 'regex:/@ucsc\.cl$/i'], //CON RESTRICCION
+                'correo_profesor' => ['required', 'email:rfc,dns', 'max:255'], // SIN RESTRICCION
+                //'correo_profesor' => ['required', 'email:rfc,dns', 'max:255', 'regex:/@ucsc\.cl$/i'], //CON RESTRICCION
             ]);
             //valida si los datos son correctos, si no salta al profesor y continua con el siguiente 
             if ($validator->fails()) {
@@ -85,7 +85,8 @@ class CargarDatosSistemasUCSC extends Command
             $validator = Validator::make($alumno->toArray(), [
                 'rut_alumno' => ['required', 'integer', 'between:1000000,60000000'],
                 'nombre_alumno' => ['required', 'string', 'max:100', 'regex:/^[\pL\s\-]+$/u'],
-                'correo_alumno' => ['required', 'email:rfc,dns', 'max:255', 'regex:/@ing\.ucsc\.cl$/i'],
+                'correo_alumno' => ['required', 'email:rfc,dns', 'max:255'], // SIN RESTRICCION
+                //'correo_alumno' => ['required', 'email:rfc,dns', 'max:255', 'regex:/@ing\.ucsc\.cl$/i'], // CON RESTRICCION
             ]);
             if ($validator->fails()) { 
                 file_put_contents($logPath, "[" . now() . "] Alumno rechazado RUT: " . $alumno->rut_alumno . "\n", FILE_APPEND);
