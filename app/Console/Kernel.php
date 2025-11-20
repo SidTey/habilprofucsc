@@ -18,12 +18,17 @@ class Kernel extends ConsoleKernel
     ];
 
     /**
-     * Define the application's command schedule.
+     * Define the application's command schedule (R1.16).
+     * 
+     * R1.16: Este proceso se activará automáticamente cada minuto
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('sync:ucsc')->cron('* * * * *')->name('sync-ucsc-worker')->withoutOverlapping();
-        //$schedule->command('sync:ucsc')->everyMinute(); //esto se hace para que los datos se vayan subiendo periodicamente de la bd fantasma a la bd de habilprof
+        // Ejecuta el comando sync:ucsc cada minuto sin solapamiento (R1.16)
+        $schedule->command('sync:ucsc')
+                 ->everyMinute()
+                 ->name('sync-ucsc-worker')
+                 ->withoutOverlapping();
     }
 
     /**
