@@ -5,7 +5,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "dev:start": "concurrently \"php artisan serve\" \"npm run dev\" \"php run_sync_ucsc.php\""
+        "dev:iniciar": "concurrently \"php artisan serve\" \"npm run dev\" \"php run_sync_ucsc.php\""
     },
     "devDependencies": {
         "@vitejs/plugin-react": "^4.0.0",
