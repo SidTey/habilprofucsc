@@ -68,14 +68,6 @@ class IngresoHabilitaciones extends Controller
             $habilitacion->numero_semestre = $request->input('numero_semestre');
             $habilitacion->save();
 
-            // recupera la habilitación recién creada para obtener su id_habilitacion
-            $generatedId = $request->input('rut_alumno') . '_' . $request->input('año_semestre') . '-' . $request->input('numero_semestre');
-            $habilitacion = HabilitacionProfesional::find($generatedId); // esto usa el ID compuesto generado anteriormente 
-            
-            if (!$habilitacion) {
-                throw new \Exception('Error al recuperar la habilitación recién creada.');
-            }
-
             // procesar según tipo de habilitación
             if (in_array($request->tipo_habilitacion, ['PrIng', 'PrInv'])) {
                 $this->procesarPracticaIngenieriaInvestigacion($request, $habilitacion); //procesa PrIng o PrInv
