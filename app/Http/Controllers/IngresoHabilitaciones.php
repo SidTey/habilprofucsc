@@ -138,9 +138,9 @@ class IngresoHabilitaciones extends Controller
         // R2.7, R2.14, R2.15: Validación de profesores (Guía, Comisión, Co-Guía)
         $validator = Validator::make($request->all(), [
             'titulo_proyecto' => 'required|string|min:3|max:500',
-            'rut_profesor_guia' => 'required|integer|min:10000000|max:60000000',
-            'rut_profesor_comision' => 'required|integer|min:10000000|max:60000000',
-            'rut_profesor_co_guia' => 'nullable|integer|min:10000000|max:60000000',
+            'rut_profesor_guia' => 'required|integer|min:1000000|max:60000000',
+            'rut_profesor_comision' => 'required|integer|min:1000000|max:60000000',
+            'rut_profesor_co_guia' => 'nullable|integer|min:1000000|max:60000000',
         ], [
             // Mensajes personalizados según R2.24
             'titulo_proyecto.required' => 'Título de proyecto no válido',
