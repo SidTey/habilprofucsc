@@ -230,8 +230,12 @@ npm run dev:iniciar
 
 Luego abre tu navegador en: **http://localhost:8000**
 
----
+--- 
 
+# ⚠️IMPORTANTE: USUARIO Y CONTRASEÑA DE ADMINISTRADOR
+ **RUT: 12345678**
+
+ **CONTRASEÑA: administrador**
 
 ## 📋 Comandos Útiles
 
