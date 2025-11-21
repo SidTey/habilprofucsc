@@ -32,22 +32,22 @@ class IngresoHabilitaciones extends Controller
     public function getProfesoresDisponibles(Request $request)
     {
         $profesores = Profesor::select('rut_profesor', 'nombre_profesor')->get();
-        
+
         // Si se proporciona id_habilitacion, marca profesores ya asignados
         $idHabilitacion = $request->query('id_habilitacion');
-        
+
         if ($idHabilitacion) {
             // Obtener RUTs de profesores ya asignados a esta habilitación
             $profesoresAsignados = Asigna::where('id_habilitacion', $idHabilitacion)
                 ->pluck('rut_profesor')
                 ->toArray();
-            
+
             // Marcar profesores como asignados o disponibles
             $profesores = $profesores->map(function ($profesor) use ($profesoresAsignados) {
                 $profesor->asignado = in_array($profesor->rut_profesor, $profesoresAsignados);
                 return $profesor;
             });
-            
+
             // Opcionalmente, filtrar solo disponibles si se solicita
             if ($request->query('solo_disponibles') === 'true') {
                 $profesores = $profesores->filter(function ($profesor) {
@@ -55,7 +55,7 @@ class IngresoHabilitaciones extends Controller
                 })->values();
             }
         }
-        
+
         // retorna en formato json para que se vea en el frontend bien, y no como un array como se extrae de la base de datos
         return response()->json([
             'success' => true,
@@ -94,7 +94,7 @@ class IngresoHabilitaciones extends Controller
         try {
             DB::beginTransaction();
 
-            // Crear habilitación profesional (sin id_habilitacion manual, ya que este lo genera de base de datos de habilprof)
+            // Crear habilitación profesional
             $habilitacion = new HabilitacionProfesional();
             $habilitacion->rut_alumno = $request->rut_alumno;
             $habilitacion->descripcion_habilitacion = $request->descripcion_habilitacion;
@@ -266,16 +266,17 @@ class IngresoHabilitaciones extends Controller
         $habilitaciones = HabilitacionProfesional::with([
             'alumno',
             'asignaciones.profesor',
-            'practica_ingenieria',
-            'practica_nivelacion'
+            'pring',
+            'prinv',
+            'prtut'
         ])->get();
 
         // agregar el tipo de habilitación basado en las relaciones
         $habilitaciones = $habilitaciones->map(function ($habilitacion) {
             $data = $habilitacion->toArray();
-            if ($habilitacion->practica_ingenieria) {
+            if ($habilitacion->pring) {
                 $data['tipo_habilitacion'] = 'PrIng';
-            } elseif ($habilitacion->practica_nivelacion) {
+            } elseif ($habilitacion->prinv) {
                 $data['tipo_habilitacion'] = 'PrInv';
             } else {
                 $data['tipo_habilitacion'] = 'PrTut';
@@ -287,5 +288,227 @@ class IngresoHabilitaciones extends Controller
             'success' => true,
             'data' => $habilitaciones
         ]);
+    }
+
+    // Buscar habilitación por ID (R3.3)
+    public function show($id)
+    {
+        $habilitacion = HabilitacionProfesional::with([
+            'alumno',
+            'asignaciones.profesor',
+            'pring',
+            'prinv',
+            'prtut.empresa',
+            'prtut.supervisor'
+        ])->find($id);
+
+        if (!$habilitacion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La habilitación profesional no existe, por favor vuelva a intentarlo'
+            ], 404);
+        }
+
+        // Determinar tipo
+        $tipo = 'PrTut';
+        $titulo = null;
+        if ($habilitacion->pring) {
+            $tipo = 'PrIng';
+            $titulo = $habilitacion->pring->titulo_proy;
+        } elseif ($habilitacion->prinv) {
+            $tipo = 'PrInv';
+            $titulo = $habilitacion->prinv->titulo_proy;
+        }
+
+        // Estructurar respuesta según Salida 1
+        $data = [
+            'Id_Habilitacion' => $habilitacion->id_habilitacion,
+            'Rut_Alumno' => $habilitacion->rut_alumno,
+            'Nombre_Alumno' => $habilitacion->alumno->nombre_alumno,
+            'Tipo_Habilitacion' => $tipo,
+            'Titulo_Proyecto_Practica' => $titulo,
+            'Descripcion_Habilitacion' => $habilitacion->descripcion_habilitacion,
+            'Semestre_Inicio' => [
+                'año' => $habilitacion->año_semestre,
+                'semestre' => $habilitacion->numero_semestre
+            ],
+            'Nota_Final' => $habilitacion->nota_final,
+            'Fecha_Nota' => $habilitacion->fecha_nota,
+        ];
+
+        // Agregar profesores
+        foreach ($habilitacion->asignaciones as $asigna) {
+            $data[$asigna->rol] = [
+                'Rut_Profesor' => $asigna->rut_profesor,
+                'Nombre_Profesor' => $asigna->profesor->nombre_profesor
+            ];
+        }
+
+        // Agregar datos PrTut
+        if ($tipo === 'PrTut' && $habilitacion->prtut) {
+            $data['Rut_Empresa'] = $habilitacion->prtut->rut_empresa;
+            $data['Nombre_Empresa'] = $habilitacion->prtut->empresa->nombre_empresa ?? null;
+            $data['Rut_Supervisor'] = $habilitacion->prtut->rut_supervisor;
+            $data['Nombre_Supervisor'] = $habilitacion->prtut->supervisor->nombre_supervisor ?? null;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
+    }
+
+    // Eliminar habilitación (R3.4.1)
+    public function destroy($id)
+    {
+        $habilitacion = HabilitacionProfesional::find($id);
+
+        if (!$habilitacion) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La habilitación profesional no existe'
+            ], 404);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Eliminar asignaciones manualmente por si falta ON DELETE CASCADE en la BD
+            Asigna::where('id_habilitacion', $id)->delete();
+
+            // Las FK tienen ON DELETE CASCADE en las migraciones, así que borrar el padre borra hijos
+            $habilitacion->delete();
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'La habilitación ha sido eliminada correctamente'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Actualizar habilitación (R3.4.2)
+    public function update(Request $request, $id)
+    {
+        $habilitacion = HabilitacionProfesional::find($id);
+        if (!$habilitacion) {
+            return response()->json(['success' => false, 'message' => 'No encontrado'], 404);
+        }
+
+        // Validaciones básicas comunes (R3.1)
+        try {
+            DB::beginTransaction();
+
+            // Actualizar campos base editables
+            if ($request->has('descripcion_habilitacion')) {
+                $habilitacion->descripcion_habilitacion = $request->input('descripcion_habilitacion');
+            }
+            if ($request->has('año_semestre')) {
+                $habilitacion->año_semestre = $request->input('año_semestre');
+            }
+            if ($request->has('numero_semestre')) {
+                $habilitacion->numero_semestre = $request->input('numero_semestre');
+            }
+            if ($request->has('nota_final')) {
+                $habilitacion->nota_final = $request->input('nota_final');
+            }
+            if ($request->has('fecha_nota')) {
+                $habilitacion->fecha_nota = $request->input('fecha_nota');
+            }
+            $habilitacion->save();
+
+            // Actualizar específicos
+            $tipo = $request->input('tipo_habilitacion'); // Debe enviarse desde frontend para saber qué actualizar
+
+            if (in_array($tipo, ['PrIng', 'PrInv'])) {
+                // Actualizar Título
+                if ($request->has('titulo_proyecto')) {
+                    if ($tipo === 'PrIng' && $habilitacion->pring) {
+                        $habilitacion->pring->update(['titulo_proy' => $request->input('titulo_proyecto')]);
+                    } elseif ($tipo === 'PrInv' && $habilitacion->prinv) {
+                        $habilitacion->prinv->update(['titulo_proy' => $request->input('titulo_proyecto')]);
+                    }
+                }
+
+                // Actualizar Profesores (Guía, Co-Guía, Comisión)
+                $this->actualizarAsignacion($id, 'Profesor_Guia', $request->input('rut_profesor_guia'));
+                $this->actualizarAsignacion($id, 'Profesor_Comision', $request->input('rut_profesor_comision'));
+
+                // Co-Guía es opcional, si viene null o vacío se borra
+                if ($request->has('rut_profesor_co_guia')) {
+                    $rutCoGuia = $request->input('rut_profesor_co_guia');
+                    if ($rutCoGuia) {
+                        Asigna::updateOrCreate(
+                            ['id_habilitacion' => $id, 'rol' => 'Profesor_Co_Guia'],
+                            ['rut_profesor' => $rutCoGuia]
+                        );
+                    } else {
+                        Asigna::where('id_habilitacion', $id)->where('rol', 'Profesor_Co_Guia')->delete();
+                    }
+                }
+
+            } elseif ($tipo === 'PrTut') {
+                // Actualizar Empresa y Supervisor
+                if ($request->has('rut_empresa') && $request->has('nombre_empresa')) {
+                    $empresa = Empresa::updateOrCreate(
+                        ['rut_empresa' => $request->input('rut_empresa')],
+                        ['nombre_empresa' => $request->input('nombre_empresa')]
+                    );
+                }
+
+                if ($request->has('rut_supervisor') && $request->has('nombre_supervisor')) {
+                    $rutEmpresa = $request->input('rut_empresa') ?? ($habilitacion->prtut->rut_empresa ?? null);
+                    if ($rutEmpresa) {
+                        Supervisor::updateOrCreate(
+                            ['rut_supervisor' => $request->input('rut_supervisor')],
+                            [
+                                'nombre_supervisor' => $request->input('nombre_supervisor'),
+                                'rut_empresa' => $rutEmpresa
+                            ]
+                        );
+                    }
+                }
+
+                // Actualizar PrTut relación
+                if ($habilitacion->prtut) {
+                    $habilitacion->prtut->update([
+                        'rut_empresa' => $request->input('rut_empresa') ?? $habilitacion->prtut->rut_empresa,
+                        'rut_supervisor' => $request->input('rut_supervisor') ?? $habilitacion->prtut->rut_supervisor,
+                    ]);
+                }
+
+                // Actualizar Tutor
+                $this->actualizarAsignacion($id, 'Profesor_Tutor', $request->input('rut_profesor_tutor'));
+            }
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Los datos han sido actualizados correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function actualizarAsignacion($idHabilitacion, $rol, $rutProfesor)
+    {
+        if ($rutProfesor) {
+            Asigna::updateOrCreate(
+                ['id_habilitacion' => $idHabilitacion, 'rol' => $rol],
+                ['rut_profesor' => $rutProfesor]
+            );
+        }
     }
 }

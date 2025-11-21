@@ -8,6 +8,7 @@ function Login({ onLoginSuccess }) {
     // --- Estados para manejar el formulario ---
     const [rut, setRut] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // Nuevo estado para mostrar/ocultar contraseña
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -16,7 +17,7 @@ function Login({ onLoginSuccess }) {
      */
     const handleSubmit = async (e) => {
         // e.preventDefault() es CRUCIAL para evitar que la página se recargue
-        // y nos mande a la URL con GET (el error que tenías).
+        // y nos mande a la URL con GET.
         e.preventDefault();
 
         setLoading(true);
@@ -36,7 +37,7 @@ function Login({ onLoginSuccess }) {
             // Si axios.post falla (ej: 401, 422)
             console.error('Error en el login:', err.response);
 
-    
+
 
             if (err.response && err.response.data) {
                 if (err.response.data.message) {
@@ -99,6 +100,51 @@ function Login({ onLoginSuccess }) {
                 .form-label {
                     font-family: 'Roboto', sans-serif;
                     font-weight: 700;
+                }
+
+                /* --- Password Toggle --- */
+                .password-wrapper {
+                    position: relative;
+                    width: 100%;
+                    display: flex; /* Asegura que el wrapper tome altura */
+                    align-items: center;
+                }
+                .password-wrapper .form-control {
+                    width: 100%;
+                    padding-right: 50px; /* Espacio para el botón */
+                    z-index: 1;
+                }
+                .password-toggle-btn {
+                    position: absolute;
+                    right: 20px;
+                    top: calc(48% - 1px);
+                    transform: translateY(-50%);
+
+                    background: transparent !important;
+                    border: none !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    color: #000 !important; /* Negro forzado */
+                    z-index: 1000 !important; /* Z-index muy alto */
+                    cursor: pointer;
+                    width: 30px; /* Ancho fijo para asegurar área de clic */
+                    height: 30px; /* Alto fijo */
+                }
+                .password-toggle-btn:hover {
+                    color: var(--ucsc-red) !important;
+                }
+                .password-toggle-btn:focus {
+                    outline: none;
+                }
+                .password-toggle-btn svg {
+                    width: 24px;
+                    height: 24px;
+                    stroke-width: 2;
                 }
 
                 /* --- Estilos del Banner --- */
@@ -227,17 +273,40 @@ function Login({ onLoginSuccess }) {
 
                                 <div className="mb-4">
                                     <label htmlFor="password" className="form-label">Contraseña</label>
-                                    <input
-                                        type="password"
-                                        id="password"
-                                        name="password"
-                                        className="form-control form-control-lg"
-                                        placeholder="Contraseña"
-                                        autoComplete="current-password"
-                                        required
-                                        value={password} // Conectado al estado
-                                        onChange={(e) => setPassword(e.target.value)} // Conectado al estado
-                                    />
+                                    <div className="password-wrapper">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            id="password"
+                                            name="password"
+                                            className="form-control form-control-lg"
+                                            placeholder="Contraseña"
+                                            autoComplete="current-password"
+                                            required
+                                            value={password} // Conectado al estado
+                                            onChange={(e) => setPassword(e.target.value)} // Conectado al estado
+                                            style={{ paddingRight: '45px' }}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="password-toggle-btn"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                                            tabIndex="-1"
+                                        >
+                                            {showPassword ? (
+                                                // Ojo tachado (Ocultar)
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                                </svg>
+                                            ) : (
+                                                // Ojo normal (Mostrar)
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                </svg>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <button
@@ -249,12 +318,7 @@ function Login({ onLoginSuccess }) {
                                 </button>
                             </form>
 
-                            {/* Link Olvidar Contraseña (Sin link de registro) */}
-                            <div className="text-center mt-4">
-                                <a href="#" className="link-ucsc small">
-                                    Si olvidaste tu contraseña haz click aquí
-                                </a>
-                            </div>
+
                         </div>
                     </div>
 

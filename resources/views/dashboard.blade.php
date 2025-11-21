@@ -43,8 +43,8 @@
 
       <!-- Sección Eliminar datos -->
       <section id="section-eliminar" class="section">
-        <h2>Eliminar Datos</h2>
-        <p>Formulario de eliminación de habilitación profesional (próximamente).</p>
+        <h2>Eliminar/Modificar Datos</h2>
+        <iframe src="{{ route('habilitacion.eliminar.embed') }}" class="form-iframe"></iframe>
       </section>
     </div>
 
@@ -56,14 +56,14 @@
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '{{ route("logout") }}';
-        
+
         // Agregar token CSRF
         const csrfInput = document.createElement('input');
         csrfInput.type = 'hidden';
         csrfInput.name = '_token';
         csrfInput.value = '{{ csrf_token() }}';
         form.appendChild(csrfInput);
-        
+
         document.body.appendChild(form);
         form.submit();
       }
@@ -73,15 +73,15 @@
       // Manejo de navegación
       const navButtons = document.querySelectorAll('.nav-btn:not(.logout)');
       const sections = document.querySelectorAll('.section');
-      
+
       navButtons.forEach(btn => {
         btn.addEventListener('click', function() {
           const targetSection = this.getAttribute('data-section');
-          
+
           // Remover active de todos los botones y secciones
           navButtons.forEach(b => b.classList.remove('active'));
           sections.forEach(s => s.classList.remove('active'));
-          
+
           // Activar botón y sección correspondiente
           this.classList.add('active');
           document.getElementById('section-' + targetSection).classList.add('active');

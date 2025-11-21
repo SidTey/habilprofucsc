@@ -39,14 +39,20 @@ class HabilitacionProfesional extends Model
     }
 
     // Relación con PrIng
-    public function PrIng()
+    public function pring()
     {
         return $this->hasOne(Pring::class, 'id_habilitacion', 'id_habilitacion');
     }
 
     // Relación con Prinv
-    public function PrInv()
+    public function prinv()
     {
         return $this->hasOne(Prinv::class, 'id_habilitacion', 'id_habilitacion');
+    }
+
+    // Relación con PrTut
+    public function prtut()
+    {
+        return $this->hasOne(Prtut::class, 'id_habilitacion', 'id_habilitacion');
     }
 }

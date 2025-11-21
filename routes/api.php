@@ -49,3 +49,8 @@ Route::get('/profesores-disponibles', [IngresoHabilitaciones::class, 'getProfeso
 
 // Ruta para crear la habilitación
 Route::post('/habilitacion-profesional', [IngresoHabilitaciones::class, 'store']);
+
+// Rutas para buscar, actualizar y eliminar habilitación (R3.3, R3.4)
+Route::get('/habilitacion-profesional/{id}', [IngresoHabilitaciones::class, 'show']);
+Route::put('/habilitacion-profesional/{id}', [IngresoHabilitaciones::class, 'update']);
+Route::delete('/habilitacion-profesional/{id}', [IngresoHabilitaciones::class, 'destroy']);

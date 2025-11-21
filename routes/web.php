@@ -48,8 +48,7 @@ Route::get('/dashboard', function () {
 Route::post('/logout', [LoginProfesorController::class, 'logoutWeb'])->name('logout');
 Route::get('/logout', [LoginProfesorController::class, 'logoutWeb']);
 
-// Ejemplo de ruta protegida por RUT admin. Para proteger otras rutas,
-// añade ->middleware(\App\Http\Middleware\CheckRutAdmin::class) en la definición.
+
 Route::get('/admin-only', function () {
     return view('habilitacion.test');
 })->middleware(\App\Http\Middleware\CheckRutAdmin::class)->name('admin.only');
@@ -58,6 +57,10 @@ Route::get('/admin-only', function () {
 Route::get('/habilitacion/agregar-embed', function () {
     return view('AgregarHabilitacionEmbed');
 })->name('habilitacion.agregar.embed');
+
+Route::get('/habilitacion/eliminar-embed', function () {
+    return view('EliminarDatosEmbed');
+})->name('habilitacion.eliminar.embed');
 
 /* Rutas para listados R4 */
 // Listado Semestral

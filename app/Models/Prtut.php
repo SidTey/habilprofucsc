@@ -22,4 +22,14 @@ class Prtut extends Model
     {
         return $this->belongsTo(HabilitacionProfesional::class, 'id_habilitacion', 'id_habilitacion');
     }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'rut_empresa', 'rut_empresa');
+    }
+
+    public function supervisor()
+    {
+        return $this->belongsTo(Supervisor::class, 'rut_supervisor', 'rut_supervisor');
+    }
 }

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Button } from 'react-bootstrap';
 import './bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../css/app.css'; 
+import '../css/app.css';
 import axios from 'axios';
 
 // Asegurar envío de cookies (sesión) en peticiones XHR hacia el backend
@@ -22,32 +22,39 @@ import HabilitacionTable from './components/HabilitacionTable';
 
 function App() {
     const path = window.location.pathname;
-    
+
     // ============ FUNCIONALIDAD ORIGINAL (embed routes) ============
-    // Si la ruta es embed, renderizar sin login (tu funcionalidad original)
+
     if (path.includes('historico-embed')) {
         return <ListadoHistorico />;
     }
-    
+
     if (path.includes('semestral-embed')) {
         return <ListadoSemestral />;
     }
-    
+
     // Si la ruta es para el formulario de agregar (embed)
     if (path.includes('agregar-embed')) {
         return (
-            <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">            
+            <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
                 <HabilprofForm />
             </div>
         );
     }
-    
-    // ============ FUNCIONALIDAD NUEVA (sistema con login) ============
-    // Para el resto de rutas, usar el sistema con autenticación
-    // IMPORTANTE: La sesión NO persiste al recargar la página
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Siempre inicia en false (no autenticado)
+
+    // Si la ruta es para eliminar/modificar (embed)
+    if (path.includes('eliminar-embed')) {
+        return (
+            <div className="min-vh-100 bg-light p-4">
+                <UcscDataTable />
+            </div>
+        );
+    }
+
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [profesor, setProfesor] = useState(null);
-    const [activeTab, setActiveTab] = useState('semestral'); // Cambiado a 'semestral' por defecto
+    const [activeTab, setActiveTab] = useState('semestral');
     const [registros, setRegistros] = useState([]);
     const [logs, setLogs] = useState([]);
     const [habilitaciones, setHabilitaciones] = useState([]);
@@ -148,52 +155,52 @@ function App() {
     return (
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             {/* Barra Superior Roja - Estilo UCSC */}
-            <nav className="navbar" style={{ 
-                background: '#d6082b', 
+            <nav className="navbar" style={{
+                background: '#d6082b',
                 padding: '0.5rem 2rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between'
             }}>
                 <div className="d-flex align-items-center gap-3">
-                    <img 
-                        src="/images/ucsc-hero.svg" 
-                        alt="UCSC Logo" 
+                    <img
+                        src="/images/ucsc-hero.svg"
+                        alt="UCSC Logo"
                         style={{ height: '40px', width: 'auto' }}
                     />
                     <span className="text-white fw-bold fs-5">HabilProf</span>
                 </div>
-                
+
                 <div className="d-flex gap-2">
-                    <Button 
+                    <Button
                         variant={activeTab === 'historico' ? 'light' : 'outline-light'}
                         onClick={() => handleTabChange('historico')}
                         size="sm"
                     >
                         Histórico
                     </Button>
-                    <Button 
+                    <Button
                         variant={activeTab === 'semestral' ? 'light' : 'outline-light'}
                         onClick={() => handleTabChange('semestral')}
                         size="sm"
                     >
                         Semestral
                     </Button>
-                    <Button 
+                    <Button
                         variant={activeTab === 'form' ? 'light' : 'outline-light'}
                         onClick={() => handleTabChange('form')}
                         size="sm"
                     >
                         Ingresar datos
                     </Button>
-                    <Button 
+                    <Button
                         variant={activeTab === 'registros' ? 'light' : 'outline-light'}
                         onClick={() => handleTabChange('registros')}
                         size="sm"
                     >
                         Eliminar datos
                     </Button>
-                    <Button 
+                    <Button
                         variant="danger"
                         onClick={handleLogout}
                         size="sm"
@@ -242,7 +249,23 @@ function App() {
     );
 }
 
-const el = document.getElementById('app');
-if (el) {
-    createRoot(el).render(<App />);
+const mountApp = () => {
+    const el = document.getElementById('app');
+    if (el) {
+        try {
+            const root = createRoot(el);
+            root.render(<App />);
+            console.log('React app mounted successfully');
+        } catch (error) {
+            console.error('Error mounting React app:', error);
+        }
+    } else {
+        console.error('Could not find #app element');
+    }
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountApp);
+} else {
+    mountApp();
 }

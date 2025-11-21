@@ -78,13 +78,11 @@ return [
         'profesores' => [
             'driver' => 'eloquent',
             'model'=>  App\Models\AutentificacionDeUsuario::class,
-
-
+        ],
 
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
-
     ],
 
     /*
@@ -134,5 +132,4 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-    ],
 ];

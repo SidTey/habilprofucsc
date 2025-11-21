@@ -1,16 +1,16 @@
 /* @refresh reload */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-    Container, 
-    Row, 
-    Col, 
-    Card, 
-    Form, 
-    Button, 
-    Spinner, 
-    Alert 
-} from 'react-bootstrap'; 
+import {
+    Container,
+    Row,
+    Col,
+    Card,
+    Form,
+    Button,
+    Spinner,
+    Alert
+} from 'react-bootstrap';
 
 // Componente para los campos de PrIng y PrInv
 // R2.20.3: Filtra profesores ya asignados
@@ -27,10 +27,10 @@ const PrIngInvFields = ({ formData, handleChange, profesores, errors }) => {
         return profesores.filter(profe => {
             const rutProfe = String(profe.rut_profesor);
             const valorCampo = String(formData[campoActual]);
-            
+
             // Si es el profesor actualmente seleccionado en este campo, mostrarlo
             if (rutProfe === valorCampo) return true;
-            
+
             // Si no está asignado a ningún otro campo, mostrarlo
             return !profesoresAsignados.includes(rutProfe);
         });
@@ -209,8 +209,8 @@ function HabilprofForm() {
         rut_alumno: '',
         tipo_habilitacion: '',
         descripcion_habilitacion: '',
-        año_semestre: new Date().getFullYear(),
-        numero_semestre: (new Date().getMonth() < 6) ? 1 : 2, // Semestre actual
+        año_semestre: '',
+        numero_semestre: '',
         titulo_proyecto: '',
         rut_profesor_guia: '',
         rut_profesor_comision: '',
@@ -264,8 +264,32 @@ function HabilprofForm() {
 
         try {
             const response = await axios.post('/api/habilitacion-profesional', formData);
-            setSuccessMessage(response.data.message);
-  
+            // Mostrar ID generado para que el usuario lo sepa
+            const idGenerado = response.data.data?.id_habilitacion;
+            const mensajeExito = idGenerado
+                ? `${response.data.message}. ID Generado: ${idGenerado}`
+                : response.data.message;
+
+            setSuccessMessage(mensajeExito);
+
+            // Limpiar formulario para nueva entrada
+            setFormData({
+                rut_alumno: '',
+                tipo_habilitacion: '',
+                descripcion_habilitacion: '',
+                año_semestre: '',
+                numero_semestre: '',
+                titulo_proyecto: '',
+                rut_profesor_guia: '',
+                rut_profesor_comision: '',
+                rut_profesor_co_guia: '',
+                rut_supervisor: '',
+                nombre_supervisor: '',
+                rut_empresa: '',
+                nombre_empresa: '',
+                rut_profesor_tutor: '',
+            });
+
         } catch (error) {
             if (error.response && error.response.status === 422) {
                 setErrors(error.response.data.errors);
@@ -346,7 +370,7 @@ function HabilprofForm() {
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Row>
-                                
+
                                 <Form.Group className="mb-3" controlId="tipo_habilitacion">
                                     <Form.Label>Tipo de Habilitación</Form.Label>
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem' }}>
@@ -388,23 +412,23 @@ function HabilprofForm() {
 
                                 {/* --- CAMPOS DINÁMICOS --- */}
                                 {(formData.tipo_habilitacion === 'PrIng' || formData.tipo_habilitacion === 'PrInv') && (
-                                    <PrIngInvFields 
-                                        formData={formData} 
-                                        handleChange={handleChange} 
-                                        profesores={profesores} 
-                                        errors={errors} 
+                                    <PrIngInvFields
+                                        formData={formData}
+                                        handleChange={handleChange}
+                                        profesores={profesores}
+                                        errors={errors}
                                     />
                                 )}
 
                                 {formData.tipo_habilitacion === 'PrTut' && (
-                                    <PrTutFields 
-                                        formData={formData} 
-                                        handleChange={handleChange} 
-                                        profesores={profesores} 
-                                        errors={errors} 
+                                    <PrTutFields
+                                        formData={formData}
+                                        handleChange={handleChange}
+                                        profesores={profesores}
+                                        errors={errors}
                                     />
                                 )}
-                                
+
                                 <hr />
 
                                 <div className="text-end">
