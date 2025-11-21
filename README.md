@@ -65,7 +65,6 @@ Crea un nuevo archivo `.env` en la raíz del proyecto.
 
 **Crear manualmente**
 1. En la raíz del proyecto, crea un archivo nuevo llamado `.env`
-2. Copia el contenido de `.env.example`
 3. Pega el contenido en tu archivo `.env`
 
 **⚠️ IMPORTANTE:** El archivo `.env` es **PERSONAL** y **ÚNICO** para tu máquina. 
@@ -211,6 +210,9 @@ Este comando crea todas las tablas necesarias en la BD para que funcione correct
 ```bash
 npm run build
 ```
+### 🔟 **Restaurar base de datos fantasma (Simulacion de sistemas UCSC)**
+
+Debe crear una base de datos llamada "sistemas_ucsc_ghost" en alguna herramienta grafica y de manejo de datos para PostgreSQL (DBeaver o PgAdmin), una vez creada debe hacer un restore del backup que esta en habilprof\database\backup\Sistemas_UCSC_ghost.backup
 
 ---
 
