@@ -16,9 +16,6 @@ use App\Http\Controllers\RegisterProfesorController;
 |
 */
 
-// --- RUTAS DE AUTENTICACIÓN (de tu amigo) ---
-// Añadimos el middleware de sesión ('web') a todas nuestras rutas.
-// Esto soluciona el Error 500.
 Route::middleware([
     // Esto es (básicamente) el grupo 'web', pero sin el CSRF (que da el Error 419)
     \Illuminate\Cookie\Middleware\EncryptCookies::class,
@@ -41,7 +38,7 @@ Route::middleware([
 
 });
 
-// --- RUTAS ORIGINALES (tus rutas) ---
+
 Route::middleware('auth:sanctum')->get('/user-sanctum', function (Request $request) {
     return $request->user();
 });
