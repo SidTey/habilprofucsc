@@ -124,7 +124,7 @@ MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=habilprof_ucsc
+DB_DATABASE=habilprof
 DB_USERNAME=postgres
 DB_PASSWORD=TU_CONTRASEÑA_POSTGRES_AQUI
 DB_SCHEMA=public
@@ -133,7 +133,7 @@ DB_SCHEMA=public
 DB_FANTASMA_CONNECTION=pgsql
 DB_FANTASMA_HOST=127.0.0.1
 DB_FANTASMA_PORT=5432
-DB_FANTASMA_DATABASE=sistemas_ucsc_ghost
+DB_FANTASMA_DATABASE=Sistemas_UCSC_ghost
 DB_FANTASMA_USERNAME=postgres
 DB_FANTASMA_PASSWORD=TU_CONTRASEÑA_POSTGRES_AQUI
 
@@ -212,7 +212,7 @@ npm run build
 ```
 ### 🔟 **Restaurar base de datos fantasma (Simulacion de sistemas UCSC)**
 
-Debe crear una base de datos llamada "sistemas_ucsc_ghost" en alguna herramienta grafica y de manejo de datos para PostgreSQL (DBeaver o PgAdmin), una vez creada debe hacer un restore del backup que esta en habilprof\database\backup\Sistemas_UCSC_ghost.backup
+Debe crear una base de datos llamada "Sistemas_UCSC_ghost" en alguna herramienta grafica y de manejo de datos para PostgreSQL (DBeaver o PgAdmin), una vez creada debe hacer un restore del backup que esta en habilprof\database\backup\Sistemas_UCSC_ghost.backup
 
 ---
 
