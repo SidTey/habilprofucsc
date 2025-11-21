@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\ListadosController;
+use App\Http\Controllers\ListadoSemestralController;
+use App\Http\Controllers\ListadoHistoricoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoginProfesorController;
 use App\Http\Middleware\AuthenticateUser;
@@ -58,21 +59,19 @@ Route::get('/habilitacion/agregar-embed', function () {
     return view('AgregarHabilitacionEmbed');
 })->name('habilitacion.agregar.embed');
 
-Route::get('/habilitacion/historico-embed', function () {
-    return view('ListadoHistoricoEmbed');
-})->name('habilitacion.historico.embed');
-
-Route::get('/habilitacion/semestral-embed', function () {
+/* Rutas para listados R4 */
+// Listado Semestral
+Route::get('/habilitacion/semestral-embed', function() {
     return view('ListadoSemestralEmbed');
 })->name('habilitacion.semestral.embed');
+Route::get('/api/listado-semestral', [ListadoSemestralController::class, 'obtenerListado'])->name('api.listado.semestral');
 
-/* Rutas para listados R4 */
+// Listado Histórico
+Route::get('/habilitacion/historico-embed', function() {
+    return view('ListadoHistoricoEmbed');
+})->name('habilitacion.historico.embed');
+Route::get('/api/listado-historico', [ListadoHistoricoController::class, 'obtenerListado'])->name('api.listado.historico');
+
+// Redireccionamiento base
 Route::get('/habilitacion', function(){ return redirect('/dashboard'); });
-Route::get('/habilitacion/listado', function(){ return view('habilitacion.test'); })->name('habilitacion.listado');
-Route::post('/habilitacion/listado', [ListadosController::class, 'listadoSemestral'])->name('habilitacion.listado.post');
-Route::post('/habilitacion/historico', [ListadosController::class, 'listadoHistorico'])->name('habilitacion.historico');
-
-// Rutas de prueba / API para consumir desde JS
 Route::get('/habilitacion/test', function(){ return view('habilitacion.test'); })->name('habilitacion.test');
-Route::get('/habilitacion/api/semestral', [ListadosController::class, 'listadoSemestralJson'])->name('habilitacion.api.semestral');
-Route::get('/habilitacion/api/historico', [ListadosController::class, 'listadoHistoricoJson'])->name('habilitacion.api.historico');

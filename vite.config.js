@@ -8,11 +8,11 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.jsx'],
             refresh: true,
         }),
-        react({
-            // Disable fast refresh to avoid the preamble detection error in this environment
-            fastRefresh: false,
-            // Some plugin versions use `refresh` option name
-            refresh: false,
-        }),
+        react(),
     ],
+    server: {
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });
