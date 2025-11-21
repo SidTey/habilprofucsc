@@ -28,9 +28,34 @@ class IngresoHabilitaciones extends Controller
     }
 
     // obtiene lista de profesores disponibles
+    // R2.20.3 y R2.21.3: Permite filtrar profesores ya asignados
     public function getProfesoresDisponibles(Request $request)
     {
         $profesores = Profesor::select('rut_profesor', 'nombre_profesor')->get();
+        
+        // Si se proporciona id_habilitacion, marca profesores ya asignados
+        $idHabilitacion = $request->query('id_habilitacion');
+        
+        if ($idHabilitacion) {
+            // Obtener RUTs de profesores ya asignados a esta habilitación
+            $profesoresAsignados = Asigna::where('id_habilitacion', $idHabilitacion)
+                ->pluck('rut_profesor')
+                ->toArray();
+            
+            // Marcar profesores como asignados o disponibles
+            $profesores = $profesores->map(function ($profesor) use ($profesoresAsignados) {
+                $profesor->asignado = in_array($profesor->rut_profesor, $profesoresAsignados);
+                return $profesor;
+            });
+            
+            // Opcionalmente, filtrar solo disponibles si se solicita
+            if ($request->query('solo_disponibles') === 'true') {
+                $profesores = $profesores->filter(function ($profesor) {
+                    return !$profesor->asignado;
+                })->values();
+            }
+        }
+        
         // retorna en formato json para que se vea en el frontend bien, y no como un array como se extrae de la base de datos
         return response()->json([
             'success' => true,
@@ -42,12 +67,21 @@ class IngresoHabilitaciones extends Controller
     public function store(Request $request)
     {
         // validacion de los datos de todas las habilitaciones (PrIng, PrInv, PrTut)
+        // R1.1: Rut_Alumno es un número entero positivo entre 1000000 y 60000000
+        // R2.1: Tipo_Habilitación es una cadena de largo 5: {PrIng, PrInv, PrTut}
+        // R2.3: Descripción_Habilitacion es texto con máximo 500 caracteres del abecedario español
+        // R2.4: Semestre_Inicio compuesto por año [2020,2050] y semestre [1,2]
         $validator = Validator::make($request->all(), [
             'rut_alumno' => 'required|integer|min:1000000|max:60000000',
             'tipo_habilitacion' => 'required|string|size:5|in:PrIng,PrInv,PrTut',
-            'descripcion_habilitacion' => 'required|string|min:50|max:500',
-            'año_semestre' => 'required|integer|min:2025|max:2050',
+            'descripcion_habilitacion' => 'required|string|max:500',
+            'año_semestre' => 'required|integer|min:2020|max:2050',
             'numero_semestre' => 'required|integer|in:1,2',
+        ], [
+            // Mensajes personalizados según R2.24
+            'rut_alumno.required' => 'El campo Rut_Alumno es obligatorio',
+            'tipo_habilitacion.required' => 'El campo Tipo_Habilitacion es obligatorio',
+            'descripcion_habilitacion.max' => 'Descripción no válida',
         ]);
         // si la validacion falla, retorna los errores en formato json.
         if ($validator->fails()) {
@@ -99,11 +133,21 @@ class IngresoHabilitaciones extends Controller
     private function procesarPracticaIngenieriaInvestigacion($request, $habilitacion)
     {
         // Validaciones especificas de cada tipo habilitacion
+        // R2.6: Titulo_Proyecto_Practica es string mínimo 3, máximo 500 caracteres
+        // R1.4: Rut_Profesor es un número entero positivo entre 10000000 y 60000000
+        // R2.7, R2.14, R2.15: Validación de profesores (Guía, Comisión, Co-Guía)
         $validator = Validator::make($request->all(), [
-            'titulo_proyecto' => 'required|string|min:3|max:100',
-            'rut_profesor_guia' => 'required|integer|min:1000000|max:60000000',
-            'rut_profesor_comision' => 'required|integer|min:1000000|max:60000000',
-            'rut_profesor_co_guia' => 'nullable|integer|min:1000000|max:60000000',
+            'titulo_proyecto' => 'required|string|min:3|max:500',
+            'rut_profesor_guia' => 'required|integer|min:10000000|max:60000000',
+            'rut_profesor_comision' => 'required|integer|min:10000000|max:60000000',
+            'rut_profesor_co_guia' => 'nullable|integer|min:10000000|max:60000000',
+        ], [
+            // Mensajes personalizados según R2.24
+            'titulo_proyecto.required' => 'Título de proyecto no válido',
+            'titulo_proyecto.min' => 'Título de proyecto no válido',
+            'titulo_proyecto.max' => 'Título de proyecto no válido',
+            'rut_profesor_guia.required' => 'El campo Profesor_Guía es obligatorio',
+            'rut_profesor_comision.required' => 'El campo Profesor_Comision es obligatorio',
         ]);
         // si la validacion falla, lanza una excepcion con los errores
         if ($validator->fails()) {
@@ -147,12 +191,33 @@ class IngresoHabilitaciones extends Controller
     private function ProcesarPracticaTutelada($request, $habilitacion)
     {
         // Validaciones especificas de PrTut
+        // R2.10: Rut_Supervisor es un número entero positivo entre 1000000 y 60000000
+        // R2.11: Nombre_Supervisor es string con máximo 100 caracteres del abecedario español
+        // R2.12: Rut_Empresa es un número entero positivo entre 1000000 y 60000000
+        // R2.13: Nombre_Empresa es string con máximo 100 caracteres del abecedario español
+        // R1.4: Rut_Profesor_Tutor es un número entero positivo entre 10000000 y 60000000
         $validator = Validator::make($request->all(), [
             'rut_supervisor' => 'required|integer|min:1000000|max:60000000',
-            'nombre_supervisor' => 'required|string|max:100',
+            'nombre_supervisor' => ['required', 'string', 'max:100', 'regex:/^[a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s]+$/u'],
             'rut_empresa' => 'required|integer|min:1000000|max:60000000',
-            'nombre_empresa' => 'required|string|max:100',
-            'rut_profesor_tutor' => 'required|integer|min:1000000|max:60000000',
+            'nombre_empresa' => ['required', 'string', 'max:100', 'regex:/^[a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s]+$/u'],
+            'rut_profesor_tutor' => 'required|integer|min:10000000|max:60000000',
+        ], [
+            // Mensajes personalizados según R2.24
+            'rut_supervisor.required' => 'El Rut de supervisor no es válido',
+            'rut_supervisor.integer' => 'El Rut de supervisor no es válido',
+            'rut_supervisor.min' => 'El Rut de supervisor no es válido',
+            'rut_supervisor.max' => 'El Rut de supervisor no es válido',
+            'nombre_supervisor.required' => 'El Nombre del supervisor no es válido',
+            'nombre_supervisor.max' => 'El Nombre del supervisor no es válido',
+            'nombre_supervisor.regex' => 'El Nombre del supervisor no es válido',
+            'rut_empresa.required' => 'El Rut de la empresa no es válido',
+            'rut_empresa.integer' => 'El Rut de la empresa no es válido',
+            'rut_empresa.min' => 'El Rut de la empresa no es válido',
+            'rut_empresa.max' => 'El Rut de la empresa no es válido',
+            'nombre_empresa.required' => 'El Nombre de la empresa no es válido',
+            'nombre_empresa.max' => 'El Nombre de la empresa no es válido',
+            'nombre_empresa.regex' => 'El Nombre de la empresa no es válido',
         ]);
         // si la validacion falla, lanza una excepcion con los errores
         if ($validator->fails()) {

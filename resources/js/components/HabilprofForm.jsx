@@ -1,3 +1,4 @@
+/* @refresh reload */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
@@ -12,159 +13,194 @@ import {
 } from 'react-bootstrap'; 
 
 // Componente para los campos de PrIng y PrInv
-const PrIngInvFields = ({ formData, handleChange, profesores, errors }) => (
-    <>
-        <h5 className="text-ucsc mt-4 mb-3">Datos de la Práctica (PrIng / PrInv)</h5>
-        <Form.Group className="mb-3" controlId="titulo_proyecto">
-            <Form.Label>Título del Proyecto</Form.Label>
-            <Form.Control
-                type="text"
-                name="titulo_proyecto"
-                value={formData.titulo_proyecto}
-                onChange={handleChange}
-                isInvalid={!!errors.titulo_proyecto}
-                placeholder="Título del proyecto"
-            />
-            <Form.Control.Feedback type="invalid">
-                {errors.titulo_proyecto && errors.titulo_proyecto[0]}
-            </Form.Control.Feedback>
-        </Form.Group>
+// R2.20.3: Filtra profesores ya asignados
+const PrIngInvFields = ({ formData, handleChange, profesores, errors }) => {
+    // Obtener lista de RUTs ya seleccionados para filtrar opciones
+    const profesoresAsignados = [
+        formData.rut_profesor_guia,
+        formData.rut_profesor_comision,
+        formData.rut_profesor_co_guia
+    ].filter(rut => rut !== '');
 
-        <Row>
-            <Form.Group as={Col} md={6} className="mb-3" controlId="rut_profesor_guia">
-                <Form.Label>Profesor Guía</Form.Label>
-                <Form.Select
-                    name="rut_profesor_guia"
-                    value={formData.rut_profesor_guia}
+    // Función para filtrar profesores disponibles para cada dropdown
+    const getProfesoresDisponibles = (campoActual) => {
+        return profesores.filter(profe => {
+            const rutProfe = String(profe.rut_profesor);
+            const valorCampo = String(formData[campoActual]);
+            
+            // Si es el profesor actualmente seleccionado en este campo, mostrarlo
+            if (rutProfe === valorCampo) return true;
+            
+            // Si no está asignado a ningún otro campo, mostrarlo
+            return !profesoresAsignados.includes(rutProfe);
+        });
+    };
+
+    return (
+        <div>
+            <h5 className="text-ucsc mt-4 mb-3">Datos de la Práctica (PrIng / PrInv)</h5>
+            <Form.Group className="mb-3" controlId="titulo_proyecto">
+                <Form.Label>Título del Proyecto</Form.Label>
+                <Form.Control
+                    type="text"
+                    name="titulo_proyecto"
+                    value={formData.titulo_proyecto}
                     onChange={handleChange}
-                    isInvalid={!!errors.rut_profesor_guia}
-                >
-                    <option value="">Seleccionar profesor...</option>
-                    {profesores.map(profe => (
-                        <option key={profe.rut_profesor} value={profe.rut_profesor}>
-                            {profe.nombre_profesor}
-                        </option>
-                    ))}
-                </Form.Select>
+                    isInvalid={!!errors.titulo_proyecto}
+                    placeholder="Título del proyecto"
+                />
                 <Form.Control.Feedback type="invalid">
-                    {errors.rut_profesor_guia && errors.rut_profesor_guia[0]}
+                    {errors.titulo_proyecto && errors.titulo_proyecto[0]}
                 </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group as={Col} md={6} className="mb-3" controlId="rut_profesor_comision">
-                <Form.Label>Profesor Comisión</Form.Label>
+            <Row>
+                <Form.Group as={Col} md={6} className="mb-3" controlId="rut_profesor_guia">
+                    <Form.Label>Profesor Guía</Form.Label>
+                    <Form.Select
+                        name="rut_profesor_guia"
+                        value={formData.rut_profesor_guia}
+                        onChange={handleChange}
+                        isInvalid={!!errors.rut_profesor_guia}
+                    >
+                        <option value="">Seleccionar profesor...</option>
+                        {getProfesoresDisponibles('rut_profesor_guia').map(profe => (
+                            <option key={profe.rut_profesor} value={profe.rut_profesor}>
+                                {profe.nombre_profesor}
+                            </option>
+                        ))}
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                        {errors.rut_profesor_guia && errors.rut_profesor_guia[0]}
+                    </Form.Control.Feedback>
+                </Form.Group>
+
+                <Form.Group as={Col} md={6} className="mb-3" controlId="rut_profesor_comision">
+                    <Form.Label>Profesor Comisión</Form.Label>
+                    <Form.Select
+                        name="rut_profesor_comision"
+                        value={formData.rut_profesor_comision}
+                        onChange={handleChange}
+                        isInvalid={!!errors.rut_profesor_comision}
+                    >
+                        <option value="">Seleccionar profesor...</option>
+                        {getProfesoresDisponibles('rut_profesor_comision').map(profe => (
+                            <option key={profe.rut_profesor} value={profe.rut_profesor}>
+                                {profe.nombre_profesor}
+                            </option>
+                        ))}
+                    </Form.Select>
+                    <Form.Control.Feedback type="invalid">
+                        {errors.rut_profesor_comision && errors.rut_profesor_comision[0]}
+                    </Form.Control.Feedback>
+                </Form.Group>
+            </Row>
+
+            <Form.Group className="mb-3" controlId="rut_profesor_co_guia">
+                <Form.Label>Profesor Co-Guía (Opcional)</Form.Label>
                 <Form.Select
-                    name="rut_profesor_comision"
-                    value={formData.rut_profesor_comision}
+                    name="rut_profesor_co_guia"
+                    value={formData.rut_profesor_co_guia}
                     onChange={handleChange}
-                    isInvalid={!!errors.rut_profesor_comision}
                 >
                     <option value="">Seleccionar profesor...</option>
-                    {profesores.map(profe => (
+                    {getProfesoresDisponibles('rut_profesor_co_guia').map(profe => (
                         <option key={profe.rut_profesor} value={profe.rut_profesor}>
-                            {profe.nombre_profesor}
+                                {profe.nombre_profesor}
                         </option>
                     ))}
                 </Form.Select>
-                <Form.Control.Feedback type="invalid">
-                    {errors.rut_profesor_comision && errors.rut_profesor_comision[0]}
-                </Form.Control.Feedback>
             </Form.Group>
-        </Row>
-
-        <Form.Group className="mb-3" controlId="rut_profesor_co_guia">
-            <Form.Label>Profesor Co-Guía (Opcional)</Form.Label>
-            <Form.Select
-                name="rut_profesor_co_guia"
-                value={formData.rut_profesor_co_guia}
-                onChange={handleChange}
-            >
-                <option value="">Seleccionar profesor...</option>
-                {profesores.map(profe => (
-                    <option key={profe.rut_profesor} value={profe.rut_profesor}>
-                            {profe.nombre_profesor}
-                    </option>
-                ))}
-            </Form.Select>
-        </Form.Group>
-    </>
-);
+        </div>
+    );
+};
 
 // Componente para los campos de PrTut
-const PrTutFields = ({ formData, handleChange, profesores, errors }) => (
-    <>
-        <h5 className="text-ucsc mt-4 mb-3">Datos de la Práctica (PrTut)</h5>
-        <Row>
-            <Form.Group as={Col} md={6} className="mb-3" controlId="rut_empresa">
-                <Form.Label>RUT Empresa</Form.Label>
-                <Form.Control
-                    type="text"
-                    name="rut_empresa"
-                    value={formData.rut_empresa}
+// R2.21.3: Filtra profesores ya asignados (aunque PrTut solo tiene 1 profesor, se mantiene consistencia)
+const PrTutFields = ({ formData, handleChange, profesores, errors }) => {
+    // Aunque PrTut solo tiene un profesor (tutor), mantenemos la lógica consistente
+    // por si en el futuro se necesita validación adicional
+    const getProfesoresDisponibles = () => {
+        // En PrTut solo hay un profesor, así que todos están disponibles
+        // pero filtramos por si acaso hay lógica de asignación previa
+        return profesores;
+    };
+
+    return (
+        <div>
+            <h5 className="text-ucsc mt-4 mb-3">Datos de la Práctica (PrTut)</h5>
+            <Row>
+                <Form.Group as={Col} md={6} className="mb-3" controlId="rut_empresa">
+                    <Form.Label>RUT Empresa</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="rut_empresa"
+                        value={formData.rut_empresa}
+                        onChange={handleChange}
+                        isInvalid={!!errors.rut_empresa}
+                        placeholder="76.123.456-7"
+                    />
+                    <Form.Control.Feedback type="invalid">{errors.rut_empresa && errors.rut_empresa[0]}</Form.Control.Feedback>
+                </Form.Group>
+                <Form.Group as={Col} md={6} className="mb-3" controlId="nombre_empresa">
+                    <Form.Label>Nombre Empresa</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="nombre_empresa"
+                        value={formData.nombre_empresa}
+                        onChange={handleChange}
+                        isInvalid={!!errors.nombre_empresa}
+                        placeholder="Nombre de la empresa"
+                    />
+                    <Form.Control.Feedback type="invalid">{errors.nombre_empresa && errors.nombre_empresa[0]}</Form.Control.Feedback>
+                </Form.Group>
+            </Row>
+            <Row>
+                <Form.Group as={Col} md={6} className="mb-3" controlId="rut_supervisor">
+                    <Form.Label>RUT Supervisor</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="rut_supervisor"
+                        value={formData.rut_supervisor}
+                        onChange={handleChange}
+                        isInvalid={!!errors.rut_supervisor}
+                        placeholder="15.123.456-7"
+                    />
+                    <Form.Control.Feedback type="invalid">{errors.rut_supervisor && errors.rut_supervisor[0]}</Form.Control.Feedback>
+                </Form.Group>
+                <Form.Group as={Col} md={6} className="mb-3" controlId="nombre_supervisor">
+                    <Form.Label>Nombre Supervisor</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="nombre_supervisor"
+                        value={formData.nombre_supervisor}
+                        onChange={handleChange}
+                        isInvalid={!!errors.nombre_supervisor}
+                        placeholder="Nombre supervisor"
+                    />
+                    <Form.Control.Feedback type="invalid">{errors.nombre_supervisor && errors.nombre_supervisor[0]}</Form.Control.Feedback>
+                </Form.Group>
+            </Row>
+            <Form.Group className="mb-3" controlId="rut_profesor_tutor">
+                <Form.Label>Profesor Tutor</Form.Label>
+                <Form.Select
+                    name="rut_profesor_tutor"
+                    value={formData.rut_profesor_tutor}
                     onChange={handleChange}
-                    isInvalid={!!errors.rut_empresa}
-                    placeholder="76.123.456-7"
-                />
-                <Form.Control.Feedback type="invalid">{errors.rut_empresa && errors.rut_empresa[0]}</Form.Control.Feedback>
+                    isInvalid={!!errors.rut_profesor_tutor}
+                >
+                    <option value="">Seleccionar profesor...</option>
+                    {getProfesoresDisponibles().map(profe => (
+                        <option key={profe.rut_profesor} value={profe.rut_profesor}>
+                            {profe.nombre_profesor}
+                        </option>
+                    ))}
+                </Form.Select>
+                <Form.Control.Feedback type="invalid">{errors.rut_profesor_tutor && errors.rut_profesor_tutor[0]}</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group as={Col} md={6} className="mb-3" controlId="nombre_empresa">
-                <Form.Label>Nombre Empresa</Form.Label>
-                <Form.Control
-                    type="text"
-                    name="nombre_empresa"
-                    value={formData.nombre_empresa}
-                    onChange={handleChange}
-                    isInvalid={!!errors.nombre_empresa}
-                    placeholder="Nombre de la empresa"
-                />
-                <Form.Control.Feedback type="invalid">{errors.nombre_empresa && errors.nombre_empresa[0]}</Form.Control.Feedback>
-            </Form.Group>
-        </Row>
-        <Row>
-            <Form.Group as={Col} md={6} className="mb-3" controlId="rut_supervisor">
-                <Form.Label>RUT Supervisor</Form.Label>
-                <Form.Control
-                    type="text"
-                    name="rut_supervisor"
-                    value={formData.rut_supervisor}
-                    onChange={handleChange}
-                    isInvalid={!!errors.rut_supervisor}
-                    placeholder="15.123.456-7"
-                />
-                <Form.Control.Feedback type="invalid">{errors.rut_supervisor && errors.rut_supervisor[0]}</Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group as={Col} md={6} className="mb-3" controlId="nombre_supervisor">
-                <Form.Label>Nombre Supervisor</Form.Label>
-                <Form.Control
-                    type="text"
-                    name="nombre_supervisor"
-                    value={formData.nombre_supervisor}
-                    onChange={handleChange}
-                    isInvalid={!!errors.nombre_supervisor}
-                    placeholder="Nombre supervisor"
-                />
-                <Form.Control.Feedback type="invalid">{errors.nombre_supervisor && errors.nombre_supervisor[0]}</Form.Control.Feedback>
-            </Form.Group>
-        </Row>
-        <Form.Group className="mb-3" controlId="rut_profesor_tutor">
-            <Form.Label>Profesor Tutor</Form.Label>
-            <Form.Select
-                name="rut_profesor_tutor"
-                value={formData.rut_profesor_tutor}
-                onChange={handleChange}
-                isInvalid={!!errors.rut_profesor_tutor}
-            >
-                <option value="">Seleccionar profesor...</option>
-                {profesores.map(profe => (
-                    <option key={profe.rut_profesor} value={profe.rut_profesor}>
-                        {profe.nombre_profesor}
-                    </option>
-                ))}
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">{errors.rut_profesor_tutor && errors.rut_profesor_tutor[0]}</Form.Control.Feedback>
-        </Form.Group>
-    </>
-);
+        </div>
+    );
+};
 
 
 // --- COMPONENTE PRINCIPAL DEL FORMULARIO ---
@@ -374,10 +410,10 @@ function HabilprofForm() {
                                 <div className="text-end">
                                     <Button type="submit" className="btn-ucsc" disabled={loading}>
                                         {loading ? (
-                                            <>
+                                            <span>
                                                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                                                Inscribiendo...
-                                            </>
+                                                {' '}Inscribiendo...
+                                            </span>
                                         ) : (
                                             'Inscribir Habilitación'
                                         )}
