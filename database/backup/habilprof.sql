@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict ZJzPXuJ5zxdullUfNhEgQiUwHnq2O1G7BsaSWcNdCS9tWeOuZ89nI9dMqaSNCfj
+\restrict rDXIG7p264jLxBxMKKAS2od7RKAb1s6MhccYSb4DzcMg104VI9CQycve3siFPUO
 
 -- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.6
 
--- Started on 2025-11-21 02:16:41
+-- Started on 2025-11-21 09:59:38
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -39,7 +39,7 @@ COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 --
--- TOC entry 883 (class 1247 OID 49188)
+-- TOC entry 856 (class 1247 OID 49353)
 -- Name: tipo_rol; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -56,7 +56,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 217 (class 1259 OID 49104)
+-- TOC entry 217 (class 1259 OID 49361)
 -- Name: alumno; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -68,7 +68,7 @@ CREATE TABLE public.alumno (
 
 
 --
--- TOC entry 227 (class 1259 OID 49197)
+-- TOC entry 218 (class 1259 OID 49366)
 -- Name: asigna; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -80,7 +80,7 @@ CREATE TABLE public.asigna (
 
 
 --
--- TOC entry 218 (class 1259 OID 49109)
+-- TOC entry 219 (class 1259 OID 49369)
 -- Name: autentificacion_de_usuario; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -91,7 +91,7 @@ CREATE TABLE public.autentificacion_de_usuario (
 
 
 --
--- TOC entry 219 (class 1259 OID 49112)
+-- TOC entry 220 (class 1259 OID 49372)
 -- Name: empresa; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -102,7 +102,7 @@ CREATE TABLE public.empresa (
 
 
 --
--- TOC entry 220 (class 1259 OID 49115)
+-- TOC entry 221 (class 1259 OID 49375)
 -- Name: habilitacion_profesional; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -118,7 +118,7 @@ CREATE TABLE public.habilitacion_profesional (
 
 
 --
--- TOC entry 221 (class 1259 OID 49120)
+-- TOC entry 222 (class 1259 OID 49380)
 -- Name: habilitacion_profesional_id_habilitacion_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -133,7 +133,7 @@ CREATE SEQUENCE public.habilitacion_profesional_id_habilitacion_seq
 
 --
 -- TOC entry 4972 (class 0 OID 0)
--- Dependencies: 221
+-- Dependencies: 222
 -- Name: habilitacion_profesional_id_habilitacion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -141,7 +141,7 @@ ALTER SEQUENCE public.habilitacion_profesional_id_habilitacion_seq OWNED BY publ
 
 
 --
--- TOC entry 222 (class 1259 OID 49121)
+-- TOC entry 223 (class 1259 OID 49381)
 -- Name: pring; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -152,7 +152,7 @@ CREATE TABLE public.pring (
 
 
 --
--- TOC entry 223 (class 1259 OID 49124)
+-- TOC entry 224 (class 1259 OID 49384)
 -- Name: prinv; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -163,7 +163,7 @@ CREATE TABLE public.prinv (
 
 
 --
--- TOC entry 224 (class 1259 OID 49127)
+-- TOC entry 225 (class 1259 OID 49387)
 -- Name: profesor; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -175,7 +175,7 @@ CREATE TABLE public.profesor (
 
 
 --
--- TOC entry 225 (class 1259 OID 49132)
+-- TOC entry 226 (class 1259 OID 49392)
 -- Name: prtut; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -187,7 +187,7 @@ CREATE TABLE public.prtut (
 
 
 --
--- TOC entry 226 (class 1259 OID 49135)
+-- TOC entry 227 (class 1259 OID 49395)
 -- Name: supervisor; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -199,7 +199,7 @@ CREATE TABLE public.supervisor (
 
 
 --
--- TOC entry 4781 (class 2604 OID 49138)
+-- TOC entry 4781 (class 2604 OID 49398)
 -- Name: habilitacion_profesional id_habilitacion; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -207,45 +207,18 @@ ALTER TABLE ONLY public.habilitacion_profesional ALTER COLUMN id_habilitacion SE
 
 
 --
--- TOC entry 4955 (class 0 OID 49104)
+-- TOC entry 4955 (class 0 OID 49361)
 -- Dependencies: 217
 -- Data for Name: alumno; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.alumno (rut_alumno, nombre_alumno, correo_alumno) FROM stdin;
-19123456	Juan Pérez	jperez@ing.ucsc.cl
-19234567	María García	mgarcia@ing.ucsc.cl
-19345678	Pedro Rodríguez	prodriguez@ing.ucsc.cl
-19456789	Ana Martínez	amartinez@ing.ucsc.cl
-19567890	Luis Hernández	lhernandez@ing.ucsc.cl
-18123456	Sofía López	slopez@ing.ucsc.cl
-18234567	Diego González	dgonzalez@ing.ucsc.cl
-18345678	Laura Díaz	ldiaz@ing.ucsc.cl
-18456789	Carlos Sánchez	csanchez@ing.ucsc.cl
-18567890	Valeria Torres	vtorres@ing.ucsc.cl
-17123123	Fernando Rojas	frojas@ing.ucsc.cl
-17234234	Gabriela Castro	gcastro@ing.ucsc.cl
-17345345	Jorge Morales	jmorales@ing.ucsc.cl
-17456456	Camila Soto	csoto@ing.ucsc.cl
-17567567	Ricardo Herrera	rherrera@ing.ucsc.cl
-20123123	Isidora Fuentes	ifuentes@ing.ucsc.cl
-20234234	Patricio Guzmán	pguzman@ing.ucsc.cl
-20345345	Daniela Silva	dsilva@ing.ucsc.cl
-20456456	Felipe Rivera	frivera@ing.ucsc.cl
-20567567	Andrea Vega	avega@ing.ucsc.cl
-21111111	Sergio Peña	spena@ing.ucsc.cl
-21222222	Beatriz Rivas	brivas@ing.ucsc.cl
-21333333	Manuel Orellana	morellana@ing.ucsc.cl
-21444444	Constanza Muñoz	cmuñoz@ing.ucsc.cl
-21555555	Sebastián Godoy	sgodoy@ing.ucsc.cl
-21554443	Sebastián Hustley	shustley@ing.ucsc.cl
-21476231	Nicolas Alvarado	nalvarado@ing.ucsc.cl
 \.
 
 
 --
--- TOC entry 4965 (class 0 OID 49197)
--- Dependencies: 227
+-- TOC entry 4956 (class 0 OID 49366)
+-- Dependencies: 218
 -- Data for Name: asigna; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -254,8 +227,8 @@ COPY public.asigna (id_habilitacion, rut_profesor, rol) FROM stdin;
 
 
 --
--- TOC entry 4956 (class 0 OID 49109)
--- Dependencies: 218
+-- TOC entry 4957 (class 0 OID 49369)
+-- Dependencies: 219
 -- Data for Name: autentificacion_de_usuario; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -264,8 +237,8 @@ COPY public.autentificacion_de_usuario (rut_admin, "contraseña") FROM stdin;
 
 
 --
--- TOC entry 4957 (class 0 OID 49112)
--- Dependencies: 219
+-- TOC entry 4958 (class 0 OID 49372)
+-- Dependencies: 220
 -- Data for Name: empresa; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -274,30 +247,28 @@ COPY public.empresa (rut_empresa, nombre_empresa) FROM stdin;
 
 
 --
--- TOC entry 4958 (class 0 OID 49115)
--- Dependencies: 220
+-- TOC entry 4959 (class 0 OID 49375)
+-- Dependencies: 221
 -- Data for Name: habilitacion_profesional; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.habilitacion_profesional (id_habilitacion, rut_alumno, descripcion_habilitacion, nota_final, fecha_nota, "año_semestre", numero_semestre) FROM stdin;
-2	19345678	sadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadfsadfadf	4.8	2024-10-20	2025	1
 \.
 
 
 --
--- TOC entry 4960 (class 0 OID 49121)
--- Dependencies: 222
+-- TOC entry 4961 (class 0 OID 49381)
+-- Dependencies: 223
 -- Data for Name: pring; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.pring (id_habilitacion, titulo_proy) FROM stdin;
-2	HOLA
 \.
 
 
 --
--- TOC entry 4961 (class 0 OID 49124)
--- Dependencies: 223
+-- TOC entry 4962 (class 0 OID 49384)
+-- Dependencies: 224
 -- Data for Name: prinv; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -306,28 +277,18 @@ COPY public.prinv (id_habilitacion, titulo_proy) FROM stdin;
 
 
 --
--- TOC entry 4962 (class 0 OID 49127)
--- Dependencies: 224
+-- TOC entry 4963 (class 0 OID 49387)
+-- Dependencies: 225
 -- Data for Name: profesor; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.profesor (rut_profesor, nombre_profesor, correo_profesor) FROM stdin;
-8111222	Francisco Gutiérrez	fgutierrez@ucsc.cl
-9222333	María Paz Soto	mpsoto@ucsc.cl
-10333444	Roberto Araya	raraya@ucsc.cl
-11444555	Verónica Cárdenas	vcardenas@ucsc.cl
-12555666	Gabriel Salazar	gsalazar@ucsc.cl
-8987654	Carolina Fuentes	cfuentes@ucsc.cl
-9876543	Andrés Pino	apino@ucsc.cl
-10765432	Claudia Rojas	crojas@ucsc.cl
-11654321	Daniel Vargas	dvargas@ucsc.cl
-12432109	Elena Bustamante	ebustamante@ucsc.cl
 \.
 
 
 --
--- TOC entry 4963 (class 0 OID 49132)
--- Dependencies: 225
+-- TOC entry 4964 (class 0 OID 49392)
+-- Dependencies: 226
 -- Data for Name: prtut; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -336,8 +297,8 @@ COPY public.prtut (id_habilitacion, rut_empresa, rut_supervisor) FROM stdin;
 
 
 --
--- TOC entry 4964 (class 0 OID 49135)
--- Dependencies: 226
+-- TOC entry 4965 (class 0 OID 49395)
+-- Dependencies: 227
 -- Data for Name: supervisor; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -347,7 +308,7 @@ COPY public.supervisor (rut_supervisor, nombre_supervisor, rut_empresa) FROM std
 
 --
 -- TOC entry 4973 (class 0 OID 0)
--- Dependencies: 221
+-- Dependencies: 222
 -- Name: habilitacion_profesional_id_habilitacion_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -355,7 +316,7 @@ SELECT pg_catalog.setval('public.habilitacion_profesional_id_habilitacion_seq', 
 
 
 --
--- TOC entry 4783 (class 2606 OID 49140)
+-- TOC entry 4783 (class 2606 OID 49400)
 -- Name: alumno alumno_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -364,7 +325,7 @@ ALTER TABLE ONLY public.alumno
 
 
 --
--- TOC entry 4801 (class 2606 OID 49201)
+-- TOC entry 4785 (class 2606 OID 49402)
 -- Name: asigna asigna_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -373,7 +334,7 @@ ALTER TABLE ONLY public.asigna
 
 
 --
--- TOC entry 4785 (class 2606 OID 49142)
+-- TOC entry 4787 (class 2606 OID 49404)
 -- Name: autentificacion_de_usuario autentificacion_de_usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -382,7 +343,7 @@ ALTER TABLE ONLY public.autentificacion_de_usuario
 
 
 --
--- TOC entry 4787 (class 2606 OID 49144)
+-- TOC entry 4789 (class 2606 OID 49406)
 -- Name: empresa empresa_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -391,7 +352,7 @@ ALTER TABLE ONLY public.empresa
 
 
 --
--- TOC entry 4789 (class 2606 OID 49146)
+-- TOC entry 4791 (class 2606 OID 49408)
 -- Name: habilitacion_profesional habilitacion_profesional_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -400,7 +361,7 @@ ALTER TABLE ONLY public.habilitacion_profesional
 
 
 --
--- TOC entry 4791 (class 2606 OID 49148)
+-- TOC entry 4793 (class 2606 OID 49410)
 -- Name: pring pring_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -409,7 +370,7 @@ ALTER TABLE ONLY public.pring
 
 
 --
--- TOC entry 4793 (class 2606 OID 49150)
+-- TOC entry 4795 (class 2606 OID 49412)
 -- Name: prinv prinv_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -418,7 +379,7 @@ ALTER TABLE ONLY public.prinv
 
 
 --
--- TOC entry 4795 (class 2606 OID 49152)
+-- TOC entry 4797 (class 2606 OID 49414)
 -- Name: profesor profesor_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -427,7 +388,7 @@ ALTER TABLE ONLY public.profesor
 
 
 --
--- TOC entry 4797 (class 2606 OID 49154)
+-- TOC entry 4799 (class 2606 OID 49416)
 -- Name: prtut prtut_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -436,7 +397,7 @@ ALTER TABLE ONLY public.prtut
 
 
 --
--- TOC entry 4799 (class 2606 OID 49156)
+-- TOC entry 4801 (class 2606 OID 49418)
 -- Name: supervisor supervisor_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -445,7 +406,7 @@ ALTER TABLE ONLY public.supervisor
 
 
 --
--- TOC entry 4808 (class 2606 OID 49202)
+-- TOC entry 4802 (class 2606 OID 49419)
 -- Name: asigna asigna_id_habilitacion_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -454,7 +415,7 @@ ALTER TABLE ONLY public.asigna
 
 
 --
--- TOC entry 4809 (class 2606 OID 49207)
+-- TOC entry 4803 (class 2606 OID 49424)
 -- Name: asigna asigna_rut_profesor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -463,7 +424,7 @@ ALTER TABLE ONLY public.asigna
 
 
 --
--- TOC entry 4802 (class 2606 OID 49157)
+-- TOC entry 4804 (class 2606 OID 49429)
 -- Name: habilitacion_profesional habilitacion_profesional_rut_alumno_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -472,7 +433,7 @@ ALTER TABLE ONLY public.habilitacion_profesional
 
 
 --
--- TOC entry 4803 (class 2606 OID 49162)
+-- TOC entry 4805 (class 2606 OID 49434)
 -- Name: pring pring_id_habilitacion_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -481,7 +442,7 @@ ALTER TABLE ONLY public.pring
 
 
 --
--- TOC entry 4804 (class 2606 OID 49167)
+-- TOC entry 4806 (class 2606 OID 49439)
 -- Name: prinv prinv_id_habilitacion_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -490,7 +451,7 @@ ALTER TABLE ONLY public.prinv
 
 
 --
--- TOC entry 4805 (class 2606 OID 49172)
+-- TOC entry 4807 (class 2606 OID 49444)
 -- Name: prtut prtut_id_habilitacion_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -499,7 +460,7 @@ ALTER TABLE ONLY public.prtut
 
 
 --
--- TOC entry 4806 (class 2606 OID 49177)
+-- TOC entry 4808 (class 2606 OID 49449)
 -- Name: prtut prtut_rut_empresa_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -508,7 +469,7 @@ ALTER TABLE ONLY public.prtut
 
 
 --
--- TOC entry 4807 (class 2606 OID 49182)
+-- TOC entry 4809 (class 2606 OID 49454)
 -- Name: prtut prtut_rut_supervisor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -516,11 +477,11 @@ ALTER TABLE ONLY public.prtut
     ADD CONSTRAINT prtut_rut_supervisor_fkey FOREIGN KEY (rut_supervisor) REFERENCES public.supervisor(rut_supervisor);
 
 
--- Completed on 2025-11-21 02:16:41
+-- Completed on 2025-11-21 09:59:38
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict ZJzPXuJ5zxdullUfNhEgQiUwHnq2O1G7BsaSWcNdCS9tWeOuZ89nI9dMqaSNCfj
+\unrestrict rDXIG7p264jLxBxMKKAS2od7RKAb1s6MhccYSb4DzcMg104VI9CQycve3siFPUO
 
