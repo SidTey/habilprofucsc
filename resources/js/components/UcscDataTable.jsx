@@ -128,7 +128,7 @@ function UcscDataTable({ onRefresh }) {
         try {
             const response = await axios.put(`/api/habilitacion-profesional/${data.Id_Habilitacion}`, formData);
             if (response.data.success) {
-                setSuccess('Los datos han sido actualizados correctamente'); // R3.4.2.4
+                setSuccess('Los datos han sido actualizados correctamente');
                 setMode(null);
                 // Recargar datos actualizados
                 handleSearch({ preventDefault: () => {} });

@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * Componente para mostrar logs del sistema (R1.13)
- * TODO: Implementar la funcionalidad completa según el código de tu amigo
+
  */
 function UcscLogs({ logs, loading, onRefresh }) {
     return (

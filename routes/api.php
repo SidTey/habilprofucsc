@@ -4,15 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IngresoHabilitaciones;
 use App\Http\Controllers\LoginProfesorController;
-use App\Http\Controllers\RegisterProfesorController;
+
 
 /*
 |--------------------------------------------------------------------------
 | Rutas API
 |--------------------------------------------------------------------------
 |
-| Aquí vamos a añadir manualmente el middleware de "sesión"
-| para que tu LoginProfesorController (que usa sesiones) funcione.
 |
 */
 

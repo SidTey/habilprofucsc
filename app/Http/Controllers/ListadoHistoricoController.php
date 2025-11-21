@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Controlador para el Listado Histórico de Habilitaciones (R4.3)
- * 
+ * Controlador para el Listado Histórico de Habilitaciones
+ *
  * Implementa la funcionalidad de consultar habilitaciones históricas
  * de un profesor en un semestre específico.
  */
@@ -15,7 +15,7 @@ class ListadoHistoricoController extends Controller
 {
     /**
      * Valida y parsea el campo semestre_inicio
-     * R2.4: Formato YYYY-S donde año [2020,2050] y semestre [1,2]
+     * Formato YYYY-S donde año [2020,2050] y semestre [1,2]
      */
     private function validarSemestre($semestreInicio)
     {
@@ -84,7 +84,7 @@ class ListadoHistoricoController extends Controller
 
     /**
      * R4.3: Listado Histórico
-     * 
+     *
      * Entrada: rut_profesor (obligatorio), semestre_inicio (obligatorio)
      * Salida: JSON con listado de habilitaciones donde participó el profesor
      */
@@ -120,45 +120,45 @@ class ListadoHistoricoController extends Controller
         $habilitaciones = DB::table('asigna as asig')
             ->join('habilitacion_profesional as hp', 'hp.id_habilitacion', '=', 'asig.id_habilitacion')
             ->join('alumno as a', 'a.rut_alumno', '=', 'hp.rut_alumno')
-            
+
             // Marcadores para determinar el tipo
             ->leftJoin('pring', 'pring.id_habilitacion', '=', 'hp.id_habilitacion')
             ->leftJoin('prinv', 'prinv.id_habilitacion', '=', 'hp.id_habilitacion')
             ->leftJoin('prtut', 'prtut.id_habilitacion', '=', 'hp.id_habilitacion')
-            
+
             // Todos los profesores asignados
             ->leftJoin('asigna as asigna_guia', function($join) {
                 $join->on('asigna_guia.id_habilitacion', '=', 'hp.id_habilitacion')
                      ->where('asigna_guia.rol', '=', 'Profesor_Guia');
             })
             ->leftJoin('profesor as prof_guia', 'prof_guia.rut_profesor', '=', 'asigna_guia.rut_profesor')
-            
+
             ->leftJoin('asigna as asigna_coguia', function($join) {
                 $join->on('asigna_coguia.id_habilitacion', '=', 'hp.id_habilitacion')
                      ->where('asigna_coguia.rol', '=', 'Profesor_Co_Guia');
             })
             ->leftJoin('profesor as prof_coguia', 'prof_coguia.rut_profesor', '=', 'asigna_coguia.rut_profesor')
-            
+
             ->leftJoin('asigna as asigna_comision', function($join) {
                 $join->on('asigna_comision.id_habilitacion', '=', 'hp.id_habilitacion')
                      ->where('asigna_comision.rol', '=', 'Profesor_Comision');
             })
             ->leftJoin('profesor as prof_comision', 'prof_comision.rut_profesor', '=', 'asigna_comision.rut_profesor')
-            
+
             ->leftJoin('asigna as asigna_tutor', function($join) {
                 $join->on('asigna_tutor.id_habilitacion', '=', 'hp.id_habilitacion')
                      ->where('asigna_tutor.rol', '=', 'Profesor_Tutor');
             })
             ->leftJoin('profesor as prof_tutor', 'prof_tutor.rut_profesor', '=', 'asigna_tutor.rut_profesor')
-            
+
             // Supervisor y Empresa (para PrTut)
             ->leftJoin('supervisor as sup', 'sup.rut_supervisor', '=', 'prtut.rut_supervisor')
             ->leftJoin('empresa as emp', 'emp.rut_empresa', '=', 'prtut.rut_empresa')
-            
+
             ->where('asig.rut_profesor', $rutProfesor)
             ->where('hp.año_semestre', $anio)
             ->where('hp.numero_semestre', $semestre)
-            
+
             ->select(
                 'hp.id_habilitacion',
                 'hp.rut_alumno',
@@ -167,12 +167,12 @@ class ListadoHistoricoController extends Controller
                 'hp.nota_final',
                 'hp.fecha_nota',
                 'asig.rol as rol_profesor_consultado',
-                
+
                 // Marcadores de tipo
                 DB::raw('CASE WHEN pring.id_habilitacion IS NOT NULL THEN 1 ELSE 0 END as es_pring'),
                 DB::raw('CASE WHEN prinv.id_habilitacion IS NOT NULL THEN 1 ELSE 0 END as es_prinv'),
                 DB::raw('CASE WHEN prtut.id_habilitacion IS NOT NULL THEN 1 ELSE 0 END as es_prtut'),
-                
+
                 // Datos para PrIng/PrInv
                 'prof_guia.rut_profesor as rut_profesor_guia',
                 'prof_guia.nombre_profesor as nombre_profesor_guia',
@@ -181,7 +181,7 @@ class ListadoHistoricoController extends Controller
                 'prof_comision.rut_profesor as rut_profesor_comision',
                 'prof_comision.nombre_profesor as nombre_profesor_comision',
                 DB::raw('COALESCE(pring.titulo_proy, prinv.titulo_proy) as titulo_proyecto_practica'),
-                
+
                 // Datos para PrTut
                 'prof_tutor.rut_profesor as rut_profesor_tutor',
                 'prof_tutor.nombre_profesor as nombre_profesor_tutor',
@@ -195,7 +195,7 @@ class ListadoHistoricoController extends Controller
         // Procesar resultados
         $resultados = $habilitaciones->map(function($hab) {
             $tipo = $this->determinarTipoHabilitacion($hab);
-            
+
             $datos = [
                 'id_habilitacion' => $hab->id_habilitacion,
                 'rut_alumno' => $hab->rut_alumno,
@@ -213,33 +213,33 @@ class ListadoHistoricoController extends Controller
                     'rut_profesor' => $hab->rut_profesor_guia,
                     'nombre_profesor' => $hab->nombre_profesor_guia
                 ];
-                
+
                 if ($hab->rut_profesor_coguia) {
                     $datos['profesor_coguia'] = [
                         'rut_profesor' => $hab->rut_profesor_coguia,
                         'nombre_profesor' => $hab->nombre_profesor_coguia
                     ];
                 }
-                
+
                 $datos['profesor_comision'] = [
                     'rut_profesor' => $hab->rut_profesor_comision,
                     'nombre_profesor' => $hab->nombre_profesor_comision
                 ];
-                
+
                 $datos['titulo_proyecto_practica'] = $hab->titulo_proyecto_practica;
             }
-            
+
             if ($tipo === 'PrTut') {
                 $datos['profesor_tutor'] = [
                     'rut_profesor' => $hab->rut_profesor_tutor,
                     'nombre_profesor' => $hab->nombre_profesor_tutor
                 ];
-                
+
                 $datos['supervisor'] = [
                     'rut_supervisor' => $hab->rut_supervisor,
                     'nombre_supervisor' => $hab->nombre_supervisor
                 ];
-                
+
                 $datos['empresa'] = [
                     'rut_empresa' => $hab->rut_empresa,
                     'nombre_empresa' => $hab->nombre_empresa

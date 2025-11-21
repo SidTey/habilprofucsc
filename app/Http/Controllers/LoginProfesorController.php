@@ -91,7 +91,7 @@ class LoginProfesorController extends Controller
 
         // Obtenemos el usuario logueado (que es un modelo 'AutentificacionDeUsuario')
         $authUser = Auth::guard('profesor')->user();
-        
+
         // Por ahora devolvemos un objeto simple con los datos del admin
         // (La tabla autentificacion_de_usuario solo tiene rut_admin, no nombre)
         $userData = [
@@ -141,12 +141,10 @@ class LoginProfesorController extends Controller
         ]);
     }
 
-    /**
-     * === MÉTODOS COMPATIBLES CON TU SISTEMA ORIGINAL (AuthController) ===
-     */
+
 
     /**
-     * Mostrar formulario de login (compatible con rutas web originales)
+     * Mostrar formulario de login
      * Retorna la SPA React que incluye el componente Login
      */
     public function showLogin()
@@ -155,18 +153,18 @@ class LoginProfesorController extends Controller
         if (Auth::guard('profesor')->check()) {
             return redirect('/dashboard');
         }
-        
+
         // Si hay sesión manual del sistema original
         if (Session::has('user_authenticated')) {
             return redirect('/dashboard');
         }
-        
+
         // Retornar la vista welcome.blade.php que contiene la SPA React con Login
         return view('welcome');
     }
 
     /**
-     * Procesar login (versión web/blade compatible con sistema original)
+     * Procesar login
      * Alternativa al método store() para rutas web tradicionales
      */
     public function loginWeb(Request $request)
@@ -189,7 +187,7 @@ class LoginProfesorController extends Controller
 
             if (Auth::guard('profesor')->attempt($credentials, false)) { // remember = false
                 $request->session()->regenerate();
-                
+
                 // Compatibilidad: Guardar también en sesión manual
                 $authUser = Auth::guard('profesor')->user();
                 Session::put('user_authenticated', true);
@@ -206,7 +204,7 @@ class LoginProfesorController extends Controller
     }
 
     /**
-     * Cerrar sesión (versión web/blade compatible con sistema original)
+     * Cerrar sesión
      */
     public function logoutWeb()
     {

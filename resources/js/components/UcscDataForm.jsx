@@ -3,7 +3,6 @@ import axios from 'axios';
 
 /**
  * Componente para formulario de carga de datos UCSC (R1)
- * TODO: Implementar la funcionalidad completa según el código de tu amigo
  */
 function UcscDataForm({ onDataSubmitted }) {
     const [loading, setLoading] = useState(false);
@@ -15,11 +14,11 @@ function UcscDataForm({ onDataSubmitted }) {
         setMessage('');
 
         try {
-            // TODO: Implementar la lógica de envío de datos UCSC
+
             const response = await axios.post('/ucsc/data', {
-                // ... datos del formulario
+
             });
-            
+
             setMessage('Datos cargados exitosamente');
             if (onDataSubmitted) {
                 onDataSubmitted();
@@ -44,7 +43,7 @@ function UcscDataForm({ onDataSubmitted }) {
                         (Componente stub - pendiente de implementación completa)
                     </p>
                 </div>
-                
+
                 {message && (
                     <div className={`p-3 mb-4 rounded ${message.includes('Error') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                         {message}

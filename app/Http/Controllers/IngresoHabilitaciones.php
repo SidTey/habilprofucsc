@@ -28,7 +28,7 @@ class IngresoHabilitaciones extends Controller
     }
 
     // obtiene lista de profesores disponibles
-    // R2.20.3 y R2.21.3: Permite filtrar profesores ya asignados
+    // Permite filtrar profesores ya asignados
     public function getProfesoresDisponibles(Request $request)
     {
         $profesores = Profesor::select('rut_profesor', 'nombre_profesor')->get();
@@ -78,7 +78,7 @@ class IngresoHabilitaciones extends Controller
             'año_semestre' => 'required|integer|min:2020|max:2050',
             'numero_semestre' => 'required|integer|in:1,2',
         ], [
-            // Mensajes personalizados según R2.24
+            // Mensajes
             'rut_alumno.required' => 'El campo Rut_Alumno es obligatorio',
             'tipo_habilitacion.required' => 'El campo Tipo_Habilitacion es obligatorio',
             'descripcion_habilitacion.max' => 'Descripción no válida',
@@ -133,16 +133,16 @@ class IngresoHabilitaciones extends Controller
     private function procesarPracticaIngenieriaInvestigacion($request, $habilitacion)
     {
         // Validaciones especificas de cada tipo habilitacion
-        // R2.6: Titulo_Proyecto_Practica es string mínimo 3, máximo 500 caracteres
-        // R1.4: Rut_Profesor es un número entero positivo entre 10000000 y 60000000
-        // R2.7, R2.14, R2.15: Validación de profesores (Guía, Comisión, Co-Guía)
+        // Titulo_Proyecto_Practica es string mínimo 3, máximo 500 caracteres
+        // Rut_Profesor es un número entero positivo entre 10000000 y 60000000
+        // Validación de profesores (Guía, Comisión, Co-Guía)
         $validator = Validator::make($request->all(), [
             'titulo_proyecto' => 'required|string|min:3|max:500',
             'rut_profesor_guia' => 'required|integer|min:1000000|max:60000000',
             'rut_profesor_comision' => 'required|integer|min:1000000|max:60000000',
             'rut_profesor_co_guia' => 'nullable|integer|min:1000000|max:60000000',
         ], [
-            // Mensajes personalizados según R2.24
+            // Mensajes
             'titulo_proyecto.required' => 'Título de proyecto no válido',
             'titulo_proyecto.min' => 'Título de proyecto no válido',
             'titulo_proyecto.max' => 'Título de proyecto no válido',
@@ -191,11 +191,11 @@ class IngresoHabilitaciones extends Controller
     private function ProcesarPracticaTutelada($request, $habilitacion)
     {
         // Validaciones especificas de PrTut
-        // R2.10: Rut_Supervisor es un número entero positivo entre 1000000 y 60000000
-        // R2.11: Nombre_Supervisor es string con máximo 100 caracteres del abecedario español
-        // R2.12: Rut_Empresa es un número entero positivo entre 1000000 y 60000000
-        // R2.13: Nombre_Empresa es string con máximo 100 caracteres del abecedario español
-        // R1.4: Rut_Profesor_Tutor es un número entero positivo entre 10000000 y 60000000
+        // Rut_Supervisor es un número entero positivo entre 1000000 y 60000000
+        // Nombre_Supervisor es string con máximo 100 caracteres del abecedario español
+        // Rut_Empresa es un número entero positivo entre 1000000 y 60000000
+        // Nombre_Empresa es string con máximo 100 caracteres del abecedario español
+        // Rut_Profesor_Tutor es un número entero positivo entre 10000000 y 60000000
         $validator = Validator::make($request->all(), [
             'rut_supervisor' => 'required|integer|min:1000000|max:60000000',
             'nombre_supervisor' => ['required', 'string', 'max:100', 'regex:/^[a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s]+$/u'],
@@ -203,7 +203,7 @@ class IngresoHabilitaciones extends Controller
             'nombre_empresa' => ['required', 'string', 'max:100', 'regex:/^[a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s]+$/u'],
             'rut_profesor_tutor' => 'required|integer|min:10000000|max:60000000',
         ], [
-            // Mensajes personalizados según R2.24
+            // Mensajes
             'rut_supervisor.required' => 'El Rut de supervisor no es válido',
             'rut_supervisor.integer' => 'El Rut de supervisor no es válido',
             'rut_supervisor.min' => 'El Rut de supervisor no es válido',
@@ -290,7 +290,7 @@ class IngresoHabilitaciones extends Controller
         ]);
     }
 
-    // Buscar habilitación por ID (R3.3)
+    // Buscar habilitación por ID
     public function show($id)
     {
         $habilitacion = HabilitacionProfesional::with([
@@ -320,7 +320,7 @@ class IngresoHabilitaciones extends Controller
             $titulo = $habilitacion->prinv->titulo_proy;
         }
 
-        // Estructurar respuesta según Salida 1
+
         $data = [
             'Id_Habilitacion' => $habilitacion->id_habilitacion,
             'Rut_Alumno' => $habilitacion->rut_alumno,
@@ -358,7 +358,7 @@ class IngresoHabilitaciones extends Controller
         ]);
     }
 
-    // Eliminar habilitación (R3.4.1)
+    // Eliminar habilitación
     public function destroy($id)
     {
         $habilitacion = HabilitacionProfesional::find($id);
@@ -393,7 +393,7 @@ class IngresoHabilitaciones extends Controller
         }
     }
 
-    // Actualizar habilitación (R3.4.2)
+    // Actualizar habilitación
     public function update(Request $request, $id)
     {
         $habilitacion = HabilitacionProfesional::find($id);
@@ -401,7 +401,7 @@ class IngresoHabilitaciones extends Controller
             return response()->json(['success' => false, 'message' => 'No encontrado'], 404);
         }
 
-        // Validaciones básicas comunes (R3.1)
+        // Validaciones básicas comunes
         try {
             DB::beginTransaction();
 

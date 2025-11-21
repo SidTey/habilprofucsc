@@ -2,7 +2,6 @@ import React from 'react';
 
 /**
  * Componente para mostrar tabla de habilitaciones (R2)
- * TODO: Implementar la funcionalidad completa según el código de tu amigo
  */
 function HabilitacionTable({ habilitaciones, loading, onRefresh }) {
     return (

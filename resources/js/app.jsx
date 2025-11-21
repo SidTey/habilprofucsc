@@ -8,12 +8,10 @@ import axios from 'axios';
 
 // Asegurar envío de cookies (sesión) en peticiones XHR hacia el backend
 axios.defaults.withCredentials = true;
-// Componentes originales (tu funcionalidad)
+
 import HabilprofForm from './components/HabilprofForm.jsx';
 import ListadoHistorico from './components/ListadoHistorico.jsx';
 import ListadoSemestral from './components/ListadoSemestral.jsx';
-
-// Componentes nuevos (funcionalidad de tu amigo)
 import Login from './components/Login';
 import UcscDataForm from './components/UcscDataForm';
 import UcscDataTable from './components/UcscDataTable';
@@ -23,7 +21,7 @@ import HabilitacionTable from './components/HabilitacionTable';
 function App() {
     const path = window.location.pathname;
 
-    // ============ FUNCIONALIDAD ORIGINAL (embed routes) ============
+    // ============ FUNCIONALIDAD (embed routes) ============
 
     if (path.includes('historico-embed')) {
         return <ListadoHistorico />;

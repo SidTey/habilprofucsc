@@ -8,7 +8,7 @@ function Login({ onLoginSuccess }) {
     // --- Estados para manejar el formulario ---
     const [rut, setRut] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false); // Nuevo estado para mostrar/ocultar contraseña
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -325,7 +325,7 @@ function Login({ onLoginSuccess }) {
                     {/* --- Columna Derecha (Banner) --- */}
                     <div className="col-lg-6 d-none d-lg-flex columna-banner">
                         <div className="banner-wrapper-nuevo">
-                            {/* Los <img> fueron eliminados, ahora es un fondo CSS */}
+
 
                             {/* --- Bloques de Texto --- */}
                             <div className="banner-texto-wrapper">
