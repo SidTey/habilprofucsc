@@ -93,9 +93,17 @@ class IngresoHabilitaciones extends Controller
 
         try {
             DB::beginTransaction();
-
+            
             // Crear habilitación profesional
             $habilitacion = new HabilitacionProfesional();
+            
+            $nextId = 1;
+            $nextId = 1;
+            while (HabilitacionProfesional::where('id_habilitacion', $nextId)->exists()) {
+                $nextId++;
+            }
+            $habilitacion->id_habilitacion = $nextId;
+
             $habilitacion->rut_alumno = $request->rut_alumno;
             $habilitacion->descripcion_habilitacion = $request->descripcion_habilitacion;
             $habilitacion->año_semestre = $request->input('año_semestre');
