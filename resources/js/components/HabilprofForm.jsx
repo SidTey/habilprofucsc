@@ -403,7 +403,7 @@ function HabilprofForm() {
                                         value={formData.descripcion_habilitacion}
                                         onChange={handleChange}
                                         isInvalid={!!errors.descripcion_habilitacion}
-                                        placeholder="Descripción detallada (mín. 50 caracteres)"
+                                        placeholder="Descripción detallada de la habilitación profesional (Máximo 500 caracteres)"
                                     />
                                     <Form.Control.Feedback type="invalid">
                                         {errors.descripcion_habilitacion && errors.descripcion_habilitacion[0]}
