@@ -1,6 +1,6 @@
 # Habilprof UCSC - Sistema de Habilitación Profesional
 
-Sistema web integrado para la gestión de habilitaciones profesionales de estudiantes de la Universidad Católica de Santiago de Chile (UCSC).
+Sistema web integrado para la gestión de habilitaciones profesionales de estudiantes de la Universidad Católica de la santisima concepcion(UCSC).
 
 ---
 
